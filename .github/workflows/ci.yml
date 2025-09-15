@@ -26,30 +26,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "18"
-          cache: "pnpm"
-
-      # pnpm 바이너리 설치 (PATH 등록)
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
           version: 10
           run_install: false
 
-      # pnpm store 고정 + 캐시
-      - name: Configure pnpm store dir
-        run: pnpm config set store-dir ~/.pnpm-store
-
-      - name: Cache pnpm store
-        uses: actions/cache@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          path: ~/.pnpm-store
-          key: pnpm-store-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
-          restore-keys: |
-            pnpm-store-${{ runner.os }}-
+          node-version: "18"
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -64,7 +52,7 @@ jobs:
         run: pnpm run build
 
       # PR일 때만 Preview 배포
-      - name: Install Vercel CLI (via pnpm dlx)
+      - name: Install Vercel CLI
         if: github.event_name == 'pull_request'
         run: pnpm dlx vercel@latest --version
 
