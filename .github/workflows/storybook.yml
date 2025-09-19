@@ -1,0 +1,93 @@
+name: 'Storybook Deployment to Chromatic'
+
+on:
+  # Pull Request가 열리거나 업데이트될 때 실행
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+
+  # main 또는 develop 브랜치에 Push될 때 실행
+  push:
+    branches: [main, develop]
+    paths:
+      - 'src/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+
+  # 수동으로 워크플로우를 실행할 수 있도록 허용
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  storybook-deployment-chromatic:
+    runs-on: ubuntu-latest
+    steps:
+      # 소스 코드 체크아웃 (전체 히스토리 포함)
+      - name: Checkout To Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Chromatic이 베이스라인을 찾기 위해 전체 Git 히스토리 필요
+
+      # pnpm 설치 및 설정
+      - name: pnpm 설정
+        uses: pnpm/action-setup@v4
+        with:
+          version: 8
+
+      # Node.js 설정 (pnpm 캐시 사용)
+      - name: Node.js 설정
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      # 의존성 패키지 설치
+      - name: pnpm 의존성 설치
+        run: pnpm install --frozen-lockfile
+
+      # Chromatic 배포 (내부적으로 Storybook 빌드를 포함)
+      - name: Chromatic 배포
+        id: publish_chromatic
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          buildScriptName: build-storybook
+          onlyChanged: true # 변경된 컴포넌트만 테스트하여 효율성 증대
+
+      # 타임존 변환 (선택 사항)
+      - name: UTC to KST 변환
+        id: convert_utc_to_kst
+        run: |
+          TS="${{ github.event.head_commit.timestamp }}"
+          KST=$(date -d "$TS +9 hours" +"%Y-%m-%d %H:%M:%S")
+          echo "kst_time=$KST" >> $GITHUB_OUTPUT
+
+      # Pull Request에 Storybook 배포 결과 코멘트
+      - name: Comment에 Chromatic URL 기록
+        if: ${{ github.event_name == 'pull_request' }}
+        uses: thollander/actions-comment-pull-request@v3
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          message: |
+            ### 🎨 Storybook Deployed
+
+            📦 PR #${{ github.event.pull_request.number }} by **${{ github.actor }}**
+            📅 KST: `${{ steps.convert_utc_to_kst.outputs.kst_time }}`
+
+            #### 🔗 Links
+            **[📖 Storybook Review](${{ steps.publish_chromatic.outputs.storybookUrl }})**
+
+            ---
+            *Powered by Chromatic* ✨
+          comment-tag: 'storybook_deployment_comment'
+          mode: 'upsert'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Push 이벤트 결과 요약 (로그용)
+      - name: 배포 결과 요약
+        if: ${{ github.event_name == 'push' }}
+        run: |
+          echo "✅ Push deployment to ${{ github.ref_name }} branch completed."
+          echo "🎨 Storybook URL: ${{ steps.publish_chromatic.outputs.storybookUrl }}"
