@@ -27,7 +27,17 @@ export default function RootLayout({
       lang="en"
       className={`${pretendard.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="font-pretendard antialiased">{children}</body>
+      <body className="font-pretendard antialiased overflow-x-hidden">
+        {/* 모바일 기기 safe area 대응 */}
+        <div
+          className="
+            mx-auto w-full max-w-[428px] min-h-svh bg-white
+            pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
+          "
+        >
+          <div className="px-6">{children}</div>
+        </div>
+      </body>
     </html>
   );
 }
