@@ -1,14 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/nextjs';
-import Test2 from './Test2';
+import Test3 from './Test3';
 
 const meta = {
-  title: 'Common/Components/Test2',
-  component: Test2,
+  title: 'Common/Components/Test3',
+  component: Test3,
   parameters: {
     layout: 'centered',
   },
   tags: ['autodocs'],
-} satisfies Meta<typeof Test2>;
+} satisfies Meta<typeof Test3>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -19,7 +19,7 @@ export const Interactive: Story = {
   parameters: {
     docs: {
       description: {
-        story: '기본 Test2 컴포넌트입니다. 버튼을 클릭할 수 있습니다.',
+        story: '기본 Test3 컴포넌트입니다. 버튼을 클릭할 수 있습니다.',
       },
     },
   },
