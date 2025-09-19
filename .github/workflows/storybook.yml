@@ -5,13 +5,13 @@ on:
   pull_request:
     branches: [main, develop]
     paths:
-      - 'src/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+      - '**.stories.tsx'
 
   # main 또는 develop 브랜치에 Push될 때 실행
   push:
     branches: [main, develop]
     paths:
-      - 'src/**/*.stories.@(js|jsx|mjs|ts|tsx)'
+      - '**.stories.tsx'
 
   # 수동으로 워크플로우를 실행할 수 있도록 허용
   workflow_dispatch:
