@@ -1,0 +1,84 @@
+name: PR Reviewers & Discord
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Prepare Context
+        id: prep
+        run: |
+          echo "IS_FORK=${{ github.event.pull_request.head.repo.fork }}" >> $GITHUB_OUTPUT
+          echo "IS_DRAFT=${{ github.event.pull_request.draft }}" >> $GITHUB_OUTPUT
+          echo "PR_BRANCH=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
+          echo "PR_NUMBER=${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          echo "PR_TITLE<<EOF" >> $GITHUB_OUTPUT
+          echo "${{ github.event.pull_request.title }}" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          echo "PR_URL=${{ github.event.pull_request.html_url }}" >> $GITHUB_OUTPUT
+          echo "PR_AUTHOR=${{ github.event.pull_request.user.login }}" >> $GITHUB_OUTPUT
+
+      - name: Gate (skip for draft/main/develop/fork/chore*/hotfix*)
+        id: gate
+        run: |
+          BR="${{ steps.prep.outputs.PR_BRANCH }}"
+          if [[ "${{ steps.prep.outputs.IS_DRAFT }}" == "true" || "${{ steps.prep.outputs.IS_FORK }}" == "true" || "$BR" == "develop" || "$BR" == "main" || "$BR" == chore* || "$BR" == hotfix* ]]; then
+            echo "SKIP=true" >> $GITHUB_OUTPUT
+          else
+            echo "SKIP=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Request Team Reviewers
+        if: steps.gate.outputs.SKIP == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.REVIEW_TOKEN }} # repo + read:org 권한
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.prep.outputs.PR_NUMBER }}
+        run: |
+          set -euo pipefail
+          TEAM_SLUG="2025-front-end" # 팀 'slug' 여야 함
+          curl -sS -X POST \
+            -H "Authorization: token $GH_TOKEN" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/$REPO/pulls/$PR_NUMBER/requested_reviewers" \
+            -d "{\"team_reviewers\": [\"$TEAM_SLUG\"]}"
+
+      - name: Send Discord Notification
+        if: steps.gate.outputs.SKIP == 'false'
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.PR_BOT_WEBHOOK_URL }}
+          DISCORD_ROLE_ID: "1351886402911998012"
+          PR_TITLE: ${{ steps.prep.outputs.PR_TITLE }}
+          PR_URL: ${{ steps.prep.outputs.PR_URL }}
+          PR_AUTHOR: ${{ steps.prep.outputs.PR_AUTHOR }}
+        run: |
+          set -euo pipefail
+          esc() { python3 - <<'PY'
+import json,sys
+print(json.dumps(sys.stdin.read()))
+PY
+          }
+          TITLE_JSON=$(printf "%s" "$PR_TITLE" | esc)
+
+          cat > payload.json <<JSON
+{
+  "content": "<@&${DISCORD_ROLE_ID}> 새로운 PR이 생성되었습니다! 리뷰 부탁드립니다.",
+  "embeds": [
+    {
+      "title": ${TITLE_JSON},
+      "url": "${PR_URL}",
+      "description": "작성자: **${PR_AUTHOR}**"
+    }
+  ],
+  "allowed_mentions": { "parse": ["roles"] }
+}
+JSON
+          curl -sS -X POST -H "Content-Type: application/json" \
+            -d @payload.json "$DISCORD_WEBHOOK_URL"

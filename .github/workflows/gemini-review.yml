@@ -1,0 +1,100 @@
+name: Gemini PR Review (Korean)
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Gate (skip for draft/main/develop/fork)
+        id: gate
+        run: |
+          if [[ "${{ github.event.pull_request.draft }}" == "true" || "${{ github.event.pull_request.head.repo.fork }}" == "true" ]]; then
+            echo "SKIP=true" >> $GITHUB_OUTPUT
+          else
+            echo "SKIP=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Review with Gemini
+        if: steps.gate.outputs.SKIP == 'false'
+        uses: actions/github-script@v7
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const { owner, repo } = context.repo;
+
+            const files = await github.rest.pulls.listFiles({ owner, repo, pull_number: pr.number, per_page: 100 });
+            const diffs = files.data
+              .filter(f => !!f.patch && ['modified','added','removed','renamed'].includes(f.status))
+              .map(f => `### ${f.filename}\n\`\`\`diff\n${f.patch}\n\`\`\``);
+
+            if (diffs.length === 0) {
+              core.info('No textual diffs to review.');
+              return;
+            }
+
+            const MAX_CHARS = 20000;
+            let merged = '';
+            for (const d of diffs) {
+              if ((merged + '\n\n' + d).length > MAX_CHARS) break;
+              merged += '\n\n' + d;
+            }
+
+            const systemKo = `\
+당신은 HomeMaster 팀의 시니어 엔지니어입니다.
+아래 PR diff를 한국어로 리뷰하세요.
+- 일반적인 칭찬/요약 금지, 구체적이고 실행 가능한 지적만 번호로 제시
+- 버그/보안/성능/접근성/스타일/비용 관점 포함
+- 가능하면 최소 수정 제안(\`\`\`suggestion 코드블록\`\`\`) 제공
+- 맥락이 부족하면 명시적으로 가정 전제 기재
+- 팀 가이드 요약:
+  - 컴포넌트: PascalCaseFileName.tsx, Hook: useXxx.ts, 유틸: kebab-case
+  - type/interface/enum은 PascalCase, enum 값/상수는 CAPITAL_SNAKE_CASE
+  - 같은 slice는 상대경로, 상위→하위 import 최대 2 depth
+  - 이미지 webp 사용, Storybook/ESLint/Prettier 준수
+`;
+
+            const userKo = `\
+Repo: ${owner}/${repo}
+PR #${pr.number} by @${pr.user.login}
+다음은 unified diff입니다:
+${merged}
+`;
+
+            const fetch = global.fetch || (await import('node-fetch')).default;
+            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=' + process.env.GEMINI_API_KEY, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                contents: [{ role: 'user', parts: [{ text: `${systemKo}\n\n---\n\n${userKo}` }]}],
+                generationConfig: { temperature: 0.2 }
+              })
+            });
+
+            if (!res.ok) {
+              const body = await res.text();
+              core.setFailed(`Gemini API error: ${res.status} ${body}`);
+              return;
+            }
+            const data = await res.json();
+            const text = data?.candidates?.[0]?.content?.parts?.map(p => p.text).join('\n') || '리뷰 결과가 비어 있습니다.';
+
+            const marker = '<!-- gemini-review-bot-kr -->';
+            const body = `${marker}\n## 🤖 Gemini Review (ko-KR)\n${text}`;
+
+            const comments = await github.rest.issues.listComments({ owner, repo, issue_number: pr.number, per_page: 100 });
+            const mine = comments.data.find(c => c.body?.includes(marker) && c.user?.type === 'Bot');
+
+            if (mine) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: mine.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number: pr.number, body });
+            }
