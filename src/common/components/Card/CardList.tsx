@@ -13,9 +13,14 @@ export interface CardListItem
 export interface CardListProps {
   items: CardListItem[];
   className?: string;
+  showBadge?: boolean;
 }
 
-export default function CardList({ items, className = '' }: CardListProps) {
+export default function CardList({
+  items,
+  showBadge,
+  className = '',
+}: CardListProps) {
   return (
     <ul className={['grid grid-cols-2 gap-4', className].join(' ')}>
       {items.map(item => (
@@ -26,6 +31,7 @@ export default function CardList({ items, className = '' }: CardListProps) {
             title={item.title}
             href={item.href}
             badges={item.badges}
+            showBadge={showBadge}
           />
         </li>
       ))}

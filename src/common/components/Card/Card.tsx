@@ -16,6 +16,7 @@ export interface CardProps {
     active?: boolean;
     onClick?: () => void;
   }>;
+  showBadge?: boolean;
 }
 
 export default function Card({
@@ -25,6 +26,7 @@ export default function Card({
   href,
   className = '',
   badges = [],
+  showBadge = true,
 }: CardProps) {
   const Wrapper: React.FC<{ children: React.ReactNode }> = ({ children }) =>
     href ? <Link href={href}>{children}</Link> : <>{children}</>;
@@ -41,7 +43,7 @@ export default function Card({
         />
 
         {/* 배지 오버레이 */}
-        {badges.length > 0 && (
+        {badges.length > 0 && showBadge && (
           <div className={'absolute z-10 flex left-1 top-1'}>
             {badges.map((b, idx) => (
               <CardBadge key={idx} {...(b as CardBadgeProps)} />
