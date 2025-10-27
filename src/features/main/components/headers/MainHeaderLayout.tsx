@@ -12,7 +12,7 @@ export default function MainHeaderLayout({ title }: MainHeaderLayoutProps) {
   const router = useRouter();
 
   const handleSearchBtn = () => {
-    router.push('/main/search');
+    router.push('/search');
   };
 
   return (
