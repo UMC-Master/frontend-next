@@ -5,39 +5,17 @@ import CardListHorizontal from '@/features/main/components/cards/CardListHorizon
 import { useRouter } from 'next/navigation';
 import TempImg from '@/assets/images/mocks/tempImg.png';
 import Image from 'next/image';
+import { mockCards } from '@/features/main/data/mockCards';
 
 export default function MainPage() {
   const router = useRouter();
-  const cards = [
-    {
-      id: 1,
-      imageSrc: '/ex.png',
-      title: '오늘은 맛있는 반찬을 만들어볼꺼에용~!!',
-      href: '/tips/1',
-      badges: [{ type: 'like' as CardBadgeType, count: 100 }],
-    },
-    {
-      id: 2,
-      imageSrc: '/ex.png',
-      title: '점심 도시락 꿀조합',
-      href: '/tips/2',
-      badges: [{ type: 'save' as CardBadgeType, count: 32 }],
-    },
-    {
-      id: 3,
-      imageSrc: '/ex.png',
-      title: '피콕 홈다이닝 행사 소식',
-      href: '/tips/3',
-      badges: [{ type: 'share' as CardBadgeType, count: 12 }],
-    },
-  ];
 
   const handleTodayTipsBtn = () => {
-    router.push('/main/today-tips');
+    router.push('/today-tips');
   };
 
   const handleMonthlyTipsBtn = () => {
-    router.push('/main/monthly-tips');
+    router.push('/monthly-tips');
   };
 
   return (
@@ -55,14 +33,14 @@ export default function MainPage() {
       />
       <div className="flex flex-col">
         <CardListHorizontal
-          items={cards.slice(0, 2)}
+          items={mockCards.slice(0, 2)}
           title="오늘의 꿀팁"
           onClick={handleTodayTipsBtn}
           showBadge={false}
         />
         <div className="h-4" />
         <CardListHorizontal
-          items={cards.slice(0, 2)}
+          items={mockCards.slice(0, 2)}
           title="이달의 TOP10"
           onClick={handleMonthlyTipsBtn}
           showBadge={false}
