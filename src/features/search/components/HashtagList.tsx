@@ -3,14 +3,14 @@
 export interface TagListProps {
   title: string;
   tags: string[];
-  onTagClick?: (tag: string) => void;
+  onClick?: (tag: string) => void;
   className?: string;
 }
 
-export default function TagList({
+export default function HashtagList({
   title,
   tags,
-  onTagClick,
+  onClick,
   className = '',
 }: TagListProps) {
   return (
@@ -23,7 +23,7 @@ export default function TagList({
         {tags.map((tag, idx) => (
           <button
             key={idx}
-            onClick={() => onTagClick?.(tag)}
+            onClick={() => onClick?.(tag)}
             className="px-3 py-1.5 bg-gray-200 text-gray-800 rounded-lg text-body2"
           >
             #{tag}
