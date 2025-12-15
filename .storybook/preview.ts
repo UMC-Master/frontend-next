@@ -1,6 +1,18 @@
 import type { Preview } from '@storybook/nextjs-vite';
+import '../src/app/globals.css';
+import { pretendard } from '../src/lib/fonts/pretendard';
 
 const preview: Preview = {
+  decorators: [
+    Story => {
+      // pretendard 폰트 적용
+      if (typeof document !== 'undefined') {
+        document.documentElement.classList.add(pretendard.className);
+      }
+
+      return Story();
+    },
+  ],
   parameters: {
     controls: {
       matchers: {
@@ -8,13 +20,7 @@ const preview: Preview = {
         date: /Date$/i,
       },
     },
-
-    a11y: {
-      // 'todo' - show a11y violations in the test UI only
-      // 'error' - fail CI on a11y violations
-      // 'off' - skip a11y checks entirely
-      test: 'todo',
-    },
+    a11y: { test: 'todo' },
   },
 };
 
