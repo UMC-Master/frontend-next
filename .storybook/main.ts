@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
