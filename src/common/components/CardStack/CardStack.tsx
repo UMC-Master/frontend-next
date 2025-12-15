@@ -34,7 +34,7 @@ export default function CardStack({
   };
 
   return (
-    <div className="relative aspect-square w-full max-w-[420px]">
+    <div className="relative aspect-square w-full max-w-[420px] select-none">
       {Array.from({ length: Math.min(MAX_VISIBLE, cards.length) })
         .map((_, i) => {
           const cardIndex = (index + i) % cards.length;
@@ -49,7 +49,7 @@ export default function CardStack({
           return (
             <motion.div
               key={`${card.id}-${i}`}
-              className="absolute inset-0"
+              className="absolute inset-0 touch-none"
               style={{ zIndex: MAX_VISIBLE - i }}
               initial={{ x, y, scale }}
               animate={{ x, y, scale }}
@@ -69,7 +69,7 @@ export default function CardStack({
                   alt={card.alt ?? 'tip image'}
                   fill
                   priority={isTop}
-                  className="object-cover"
+                  className="object-cover pointer-events-none select-none"
                   sizes="340px"
                 />
                 {!isTop && <div className="absolute inset-0 bg-black/60" />}
