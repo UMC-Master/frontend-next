@@ -1,14 +1,29 @@
 'use client';
 
-import { CardBadgeType } from '@/common/components/Card/CardBadge';
 import CardListHorizontal from '@/features/main/components/cards/CardListHorizontal';
 import { useRouter } from 'next/navigation';
-import TempImg from '@/assets/images/mocks/tempImg.png';
-import Image from 'next/image';
+import MockImg1 from '@/assets/images/mocks/card1.png';
+import MockImg2 from '@/assets/images/mocks/card2.png';
+import MockImg3 from '@/assets/images/mocks/card3.png';
 import { mockCards } from '@/features/main/data/mockCards';
+import CardStack, { CardStackItem } from '@/common/components/Card/CardStack';
+import { useCallback } from 'react';
+
+const DUMMY_CARDS: CardStackItem[] = [
+  { id: '1', imageUrl: MockImg1.src },
+  { id: '2', imageUrl: MockImg2.src },
+  { id: '3', imageUrl: MockImg3.src },
+];
 
 export default function MainPage() {
   const router = useRouter();
+
+  const handleCardClick = useCallback(
+    (card: CardStackItem) => {
+      router.push(`/tips/${card.id}`);
+    },
+    [router],
+  );
 
   const handleTodayTipsBtn = () => {
     router.push('/today-tips');
@@ -20,17 +35,10 @@ export default function MainPage() {
 
   return (
     <main className="">
-      <h1 className="mb-6 text-title2 text-gray-1000 whitespace-pre-line">
+      <h1 className="mb-12 text-title2 text-gray-1000 whitespace-pre-line">
         {`안녕하세요!${'\n'}오늘도 홈마스터에서 꿀팁을 얻어가세요:)`}
       </h1>
-      {/* TODO: 디자인 수정 예정이므로 임시로 이미지 첨부  */}
-      <Image
-        src={TempImg}
-        alt="main banner"
-        width={378}
-        height={372}
-        className="mt-6 mb-4.5"
-      />
+      <CardStack cards={DUMMY_CARDS} onCardClick={handleCardClick} />
       <div className="flex flex-col">
         <CardListHorizontal
           items={mockCards.slice(0, 2)}
