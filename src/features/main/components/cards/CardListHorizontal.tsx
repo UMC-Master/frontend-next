@@ -1,4 +1,4 @@
-import CardList from '@/common/components/Card/CardList';
+import CardList from '@/common/components/CardList/CardList';
 import Image from 'next/image';
 import ForwardIcon from '@/assets/svgs/arrow_forward.svg';
 

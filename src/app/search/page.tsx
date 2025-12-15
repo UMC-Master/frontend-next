@@ -6,8 +6,8 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import HashtagList from '@/features/search/components/HashtagList';
 import { sortCards, type SortFilterType } from '@/lib/utils/sortCards';
 import { mockCards } from '@/features/main/data/mockCards';
-import FilterBar from '@/common/components/FilterBar';
-import CardList from '@/common/components/Card/CardList';
+import FilterBar from '@/common/components/FilterBar/FilterBar';
+import CardList from '@/common/components/CardList/CardList';
 
 export default function SearchPage() {
   const router = useRouter();

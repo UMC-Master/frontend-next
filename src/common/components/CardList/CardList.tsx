@@ -1,6 +1,6 @@
 'use client';
 
-import Card, { CardProps } from './Card';
+import Card, { CardProps } from '../Card/Card';
 
 export interface CardListItem
   extends Pick<

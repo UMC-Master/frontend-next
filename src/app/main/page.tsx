@@ -6,7 +6,9 @@ import MockImg1 from '@/assets/images/mocks/card1.png';
 import MockImg2 from '@/assets/images/mocks/card2.png';
 import MockImg3 from '@/assets/images/mocks/card3.png';
 import { mockCards } from '@/features/main/data/mockCards';
-import CardStack, { CardStackItem } from '@/common/components/Card/CardStack';
+import CardStack, {
+  CardStackItem,
+} from '@/common/components/CardStack/CardStack';
 import { useCallback } from 'react';
 
 const DUMMY_CARDS: CardStackItem[] = [

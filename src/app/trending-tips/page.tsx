@@ -3,8 +3,8 @@
 import { useMemo, useState } from 'react';
 import { sortCards, type SortFilterType } from '@/lib/utils/sortCards';
 import { mockCards } from '@/features/main/data/mockCards';
-import FilterBar from '@/common/components/FilterBar';
-import CardList from '@/common/components/Card/CardList';
+import FilterBar from '@/common/components/FilterBar/FilterBar';
+import CardList from '@/common/components/CardList/CardList';
 
 export default function TrendingTipsPage() {
   const [filter, setFilter] = useState<SortFilterType>('ALL');

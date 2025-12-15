@@ -1,4 +1,4 @@
-import { CardBadgeType } from '@/common/components/Card/CardBadge';
+import { CardBadgeType } from '@/common/components/CardBadge/CardBadge';
 
 export const mockCards = [
   {

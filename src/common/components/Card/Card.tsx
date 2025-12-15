@@ -2,7 +2,10 @@
 
 import Link from 'next/link';
 import Image from 'next/image';
-import CardBadge, { CardBadgeProps, CardBadgeType } from './CardBadge';
+import CardBadge, {
+  CardBadgeProps,
+  CardBadgeType,
+} from '@/common/components/CardBadge/CardBadge';
 
 export interface CardProps {
   imageSrc: string;

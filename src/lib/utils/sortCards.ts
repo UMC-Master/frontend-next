@@ -1,4 +1,4 @@
-import type { CardListItem } from '@/common/components/Card/CardList';
+import type { CardListItem } from '@/common/components/CardList/CardList';
 
 export type SortFilterType = 'ALL' | 'LIKE' | 'SAVE' | 'SHARE';
 
