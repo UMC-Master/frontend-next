@@ -16,6 +16,7 @@
     "@hookform/resolvers": "^5.2.2",
     "clsx": "^2.1.1",
     "globals": "^16.4.0",
+    "motion": "^12.23.26",
     "immer": "^10.1.3",
     "next": "15.5.3",
     "react": "19.1.0",
