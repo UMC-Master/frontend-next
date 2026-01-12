@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import type { StorybookConfig } from '@storybook/nextjs';
 
 const config: StorybookConfig = {
@@ -15,22 +16,29 @@ const config: StorybookConfig = {
   },
   staticDirs: ['../public'],
   webpackFinal: async config => {
-    if (config.module?.rules) {
-      config.module = config.module || {};
-      config.module.rules = config.module.rules || [];
+    config.module = config.module || {};
+    config.module.rules = config.module.rules || [];
+    const rules = config.module.rules;
 
-      const imageRule = config.module.rules.find(rule =>
-        rule?.['test']?.test('.svg'),
-      );
-      if (imageRule) {
-        imageRule['exclude'] = /\.svg$/;
-      }
-
-      config.module.rules.push({
-        test: /\.svg$/,
-        use: ['@svgr/webpack'],
-      });
+    // 기존 이미지/svg 처리 rule에서 svg 제외
+    const imageRule = rules.find((rule: any) => rule?.test?.test?.('.svg'));
+    if (imageRule) {
+      imageRule.exclude = /\.svg$/i;
     }
+
+    // SVG 처리: 기본은 URL(= next/image에 넣을 수 있음)
+    rules.push({
+      test: /\.svg$/i,
+      oneOf: [
+        {
+          resourceQuery: /component/, // import Icon from './x.svg?component'
+          use: ['@svgr/webpack'],
+        },
+        {
+          type: 'asset/resource', // import url from './x.svg'
+        },
+      ],
+    });
 
     return config;
   },
