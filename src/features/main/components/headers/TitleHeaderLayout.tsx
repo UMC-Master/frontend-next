@@ -1,12 +1,12 @@
 'use client';
 
-import Image from 'next/image';
 import { ReactNode } from 'react';
 import BackwardIcon from '@/assets/svgs/arrow_backward.svg';
 
 export interface AppHeaderProps {
   title: string | ReactNode;
-  leftIcon?: string;
+  leftIcon?: React.ComponentType<{ className?: string }>;
+  showLeftIcon?: boolean;
   onIconClick?: () => void;
   sticky?: boolean;
   className?: string;
@@ -14,7 +14,8 @@ export interface AppHeaderProps {
 
 export default function TitleHeader({
   title,
-  leftIcon = BackwardIcon,
+  leftIcon: LeftIcon = BackwardIcon,
+  showLeftIcon = true,
   onIconClick,
   sticky = false,
   className = '',
@@ -31,16 +32,16 @@ export default function TitleHeader({
     >
       {/* Left icon */}
       <div className="absolute left-0 flex items-center">
-        {leftIcon && (
-          <button
-            type="button"
-            onClick={onIconClick}
+        {LeftIcon && showLeftIcon && (
+        <button
+          type="button"
+          onClick={onIconClick}
             aria-label="left icon"
             className=""
-          >
-            <Image src={leftIcon} alt="icon" width={28} height={28} />
-          </button>
-        )}
+        >
+          <LeftIcon className="w-7 h-7" />
+        </button>
+      )}
       </div>
       {/* Title */}
       <h1 className="text-title2 text-gray-1000">{title}</h1>
