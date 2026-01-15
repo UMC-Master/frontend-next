@@ -25,7 +25,7 @@ export default function AppHeader({
               onClick={onBackClick ?? router.back}
               className="flex h-8 w-8 items-center justify-center"
             >
-              <LeftArrowIcon className="h-6 w-6 text-gray-900" />
+              <LeftArrowIcon />
             </button>
           )}
         </div>
