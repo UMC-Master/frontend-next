@@ -1,9 +1,12 @@
 declare module '*.svg' {
   import * as React from 'react';
 
-  const ReactComponent: React.FunctionComponent<
-    React.SVGProps<SVGSVGElement> & { title?: string }
+  // React Component로 쓰는 경우
+  export const ReactComponent: React.FunctionComponent<
+    React.SVGProps<SVGSVGElement>
   >;
 
-  export default ReactComponent;
+  // src (string) 로 쓰는 경우
+  const src: string;
+  export default src;
 }
