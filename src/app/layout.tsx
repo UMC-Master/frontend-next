@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { pretendard } from '@/lib/fonts/pretendard';
 import './globals.css';
+import { Suspense } from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,7 +36,9 @@ export default function RootLayout({
             pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
           "
         >
-          <div className="px-6">{children}</div>
+          <div className="px-6">
+            <Suspense fallback={null}>{children}</Suspense>
+          </div>
         </div>
       </body>
     </html>
