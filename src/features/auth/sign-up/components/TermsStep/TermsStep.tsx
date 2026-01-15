@@ -1,3 +1,5 @@
+'use client';
+
 import BeforeCheckBox from '@/assets/svgs/BeforeCheckBox.svg';
 import AfterCheckBox from '@/assets/svgs/AfterCheckBox.svg';
 import BeforeCheckIcon from '@/assets/svgs/BeforeCheck.svg';
