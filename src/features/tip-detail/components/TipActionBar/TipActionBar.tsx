@@ -1,8 +1,8 @@
-import HeartIcon from '@/assets/svgs/heart.svg';
-import HeartColorIcon from '@/assets/svgs/heart_color.svg';
-import BookmarkIcon from '@/assets/svgs/bookmark.svg';
-import BookmarkColorIcon from '@/assets/svgs/bookmark_color.svg';
-import ShareIcon from '@/assets/svgs/share.svg';
+import { ReactComponent as HeartIcon } from '@/assets/svgs/heart.svg';
+import { ReactComponent as HeartColorIcon } from '@/assets/svgs/heart_color.svg';
+import { ReactComponent as BookmarkIcon } from '@/assets/svgs/bookmark.svg';
+import { ReactComponent as BookmarkColorIcon } from '@/assets/svgs/bookmark_color.svg';
+import { ReactComponent as ShareIcon } from '@/assets/svgs/share.svg';
 
 interface Props {
   stats: {
@@ -32,13 +32,7 @@ export default function TipActionBar({ stats, onDelete }: Props) {
       <div className="flex justify-center gap-3">
         {/* ❤️ LIKE */}
         <ActionIconButton
-          icon={
-            isLiked ? (
-              <HeartColorIcon className="h-4.5 w-5" />
-            ) : (
-              <HeartIcon className="h-4.5 w-5" />
-            )
-          }
+          icon={isLiked ? <HeartColorIcon /> : <HeartIcon />}
           value={isLiked ? stats.like + 1 : stats.like}
           onClick={handleLikeClick}
           className={isLiked ? 'text-red-500' : 'text-gray-800'}
@@ -46,13 +40,7 @@ export default function TipActionBar({ stats, onDelete }: Props) {
 
         {/* 🔖 BOOKMARK */}
         <ActionIconButton
-          icon={
-            isBookmarked ? (
-              <BookmarkColorIcon className="h-4.5 w-5" />
-            ) : (
-              <BookmarkIcon className="h-4.5 w-5" />
-            )
-          }
+          icon={isBookmarked ? <BookmarkColorIcon /> : <BookmarkIcon />}
           value={isBookmarked ? stats.bookmark + 1 : stats.bookmark}
           onClick={handleBookmarkClick}
           className={isBookmarked ? 'text-blue-500' : 'text-gray-800'}
@@ -60,7 +48,7 @@ export default function TipActionBar({ stats, onDelete }: Props) {
 
         {/* 🔗 SHARE */}
         <ActionIconButton
-          icon={<ShareIcon className="h-5 w-5" />}
+          icon={<ShareIcon />}
           value={stats.share}
           className="text-gray-500"
         />
