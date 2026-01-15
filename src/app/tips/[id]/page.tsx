@@ -1,9 +1,11 @@
 import TipDetailLayout from '@/features/tip-detail/components/TipDetailLayout';
 
-interface Props {
-  params: { id: string };
-}
+export default async function Page({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-export default function Page({ params }: Props) {
-  return <TipDetailLayout tipId={params.id} />;
+  return <TipDetailLayout tipId={id} />;
 }
