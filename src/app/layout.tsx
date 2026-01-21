@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import { pretendard } from '@/lib/fonts/pretendard';
 import './globals.css';
 import { Suspense } from 'react';
+import BottomNav from '@/common/components/BottomNav/BottomNav';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -36,9 +37,10 @@ export default function RootLayout({
             pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
           "
         >
-          <div className="px-6">
+          <div className="px-6 pb-24">
             <Suspense fallback={null}>{children}</Suspense>
           </div>
+          <BottomNav />
         </div>
       </body>
     </html>
