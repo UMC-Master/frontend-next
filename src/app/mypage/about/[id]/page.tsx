@@ -2,6 +2,7 @@
 
 import { useRouter, useParams } from 'next/navigation';
 import { useMemo } from 'react';
+import Image from 'next/image';
 import BackIcon from '@/assets/svgs/arrow_backward.svg';
 import TitleHeader from '@/features/main/components/headers/TitleHeaderLayout';
 import QAAccordion from '@/features/about/components/QAAccordion';
@@ -42,12 +43,13 @@ export default function MemberDetailPage() {
         {/* 프로필 섹션 */}
         <div className="flex items-center gap-8">
           {/* 프로필 이미지 */}
-          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 shrink-0">
+          <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 shrink-0 relative">
             {member.imageSrc ? (
-              <img
+              <Image
                 src={member.imageSrc}
                 alt={`${member.role} ${member.nameKo}`}
-                className="w-full h-full object-cover"
+                fill
+                className="object-cover"
               />
             ) : (
               <div className="w-full h-full bg-gray-300" />
