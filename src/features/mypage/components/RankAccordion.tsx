@@ -22,13 +22,11 @@ export default function RankAccordion({
         className="bg-gray-100 rounded-2xl px-4 py-3 shadow-[0px_0px_16px_0px_rgba(234,234,234,1)] flex items-center justify-between w-full"
       >
         <span className="text-title3 text-main-600">{title}</span>
-        <div
-          className={`flex items-center justify-center shrink-0 w-5 h-5 transition-transform ${
-            isOpen ? 'rotate-90 scale-y-[-100%]' : 'rotate-[270deg] scale-y-[-100%]'
-          }`}
-        >
-          <ArrowBackIcon className="w-5 h-5" />
-        </div>
+          <ArrowBackIcon
+            className={`text-main-500 transition-transform ${
+              isOpen ? 'rotate-90' : '-rotate-90'
+            }`}
+          />
       </button>
 
       {/* Expandable Content */}
