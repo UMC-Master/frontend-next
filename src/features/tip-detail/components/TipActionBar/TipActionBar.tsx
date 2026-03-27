@@ -1,8 +1,12 @@
-import { ReactComponent as HeartIcon } from '@/assets/svgs/heart.svg';
-import { ReactComponent as HeartColorIcon } from '@/assets/svgs/heart_color.svg';
-import { ReactComponent as BookmarkIcon } from '@/assets/svgs/bookmark.svg';
-import { ReactComponent as BookmarkColorIcon } from '@/assets/svgs/bookmark_color.svg';
-import { ReactComponent as ShareIcon } from '@/assets/svgs/share.svg';
+'use client';
+
+import { useState } from 'react';
+
+import HeartIcon from '@/assets/svgs/heart.svg';
+import HeartColorIcon from '@/assets/svgs/heart_color.svg';
+import BookmarkIcon from '@/assets/svgs/bookmark.svg';
+import BookmarkColorIcon from '@/assets/svgs/bookmark_color.svg';
+import ShareIcon from '@/assets/svgs/share.svg';
 
 interface Props {
   stats: {
@@ -13,40 +17,32 @@ interface Props {
   onDelete: () => void;
 }
 
-import { useState } from 'react';
+interface ActionIconButtonProps {
+  icon: React.ReactNode;
+  value: number;
+  className?: string;
+  onClick?: () => void;
+}
 
 export default function TipActionBar({ stats, onDelete }: Props) {
   const [isLiked, setIsLiked] = useState(false);
   const [isBookmarked, setIsBookmarked] = useState(false);
 
-  const handleLikeClick = () => {
-    setIsLiked(prev => !prev);
-  };
-
-  const handleBookmarkClick = () => {
-    setIsBookmarked(prev => !prev);
-  };
-
   return (
     <section className="mt-6 px-4 pb-6">
       <div className="flex justify-center gap-3">
-        {/* ❤️ LIKE */}
         <ActionIconButton
           icon={isLiked ? <HeartColorIcon /> : <HeartIcon />}
           value={isLiked ? stats.like + 1 : stats.like}
-          onClick={handleLikeClick}
+          onClick={() => setIsLiked((prev) => !prev)}
           className={isLiked ? 'text-red-500' : 'text-gray-800'}
         />
-
-        {/* 🔖 BOOKMARK */}
         <ActionIconButton
           icon={isBookmarked ? <BookmarkColorIcon /> : <BookmarkIcon />}
           value={isBookmarked ? stats.bookmark + 1 : stats.bookmark}
-          onClick={handleBookmarkClick}
+          onClick={() => setIsBookmarked((prev) => !prev)}
           className={isBookmarked ? 'text-blue-500' : 'text-gray-800'}
         />
-
-        {/* 🔗 SHARE */}
         <ActionIconButton
           icon={<ShareIcon />}
           value={stats.share}
@@ -65,19 +61,7 @@ export default function TipActionBar({ stats, onDelete }: Props) {
   );
 }
 
-interface ActionIconButtonProps {
-  icon: React.ReactNode;
-  value: number;
-  className?: string;
-  onClick?: () => void;
-}
-
-function ActionIconButton({
-  icon,
-  value,
-  className,
-  onClick,
-}: ActionIconButtonProps) {
+function ActionIconButton({ icon, value, className, onClick }: ActionIconButtonProps) {
   return (
     <button
       type="button"
