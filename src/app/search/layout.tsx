@@ -4,7 +4,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { useState, useEffect, FormEvent, KeyboardEvent } from 'react';
 import BackwardIcon from '@/assets/svgs/arrow_backward.svg';
 import SearchIcon from '@/assets/svgs/search.svg';
-import Image from 'next/image';
 
 export default function SearchLayout({
   children,
@@ -21,33 +20,34 @@ export default function SearchLayout({
     setQ(initialQuery);
   }, [initialQuery]);
 
-  // ✅ 검색 실행
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = (e?: FormEvent<HTMLFormElement>) => {
+    e?.preventDefault();
+
     const next = q.trim();
+
     if (!next) {
       router.push('/search');
       return;
     }
+
     router.push(`/search?query=${encodeURIComponent(next)}`);
   };
 
-  // ✅ 엔터키로도 검색 가능하게
-  const onKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       e.preventDefault();
-      onSubmit(e as never);
+      handleSubmit();
     }
   };
 
-  // ✅ 뒤로가기 동작: 검색어 있을 때는 초기화, 없으면 메인으로
-  const onBack = () => {
+  const handleBack = () => {
     if (q.trim()) {
       setQ('');
       router.push('/search');
-    } else {
-      router.replace('/main');
+      return;
     }
+
+    router.replace('/main');
   };
 
   return (
@@ -55,34 +55,23 @@ export default function SearchLayout({
       <div className="pb-4">
         <div className="flex flex-row justify-between gap-3">
           {/* 뒤로가기 */}
-          <button aria-label="뒤로가기" onClick={onBack}>
-            <Image
-              src={BackwardIcon}
-              alt="backward icon"
-              width={28}
-              height={28}
-            />
+          <button type="button" aria-label="뒤로가기" onClick={handleBack}>
+            <BackwardIcon className="h-7 w-7" />
           </button>
-
           {/* 검색 입력 */}
-          <form onSubmit={onSubmit} className="flex-1">
+          <form onSubmit={handleSubmit} className="flex-1">
             <div className="flex items-center justify-between rounded-lg border-[0.4px] border-gray-600 bg-gray-100 px-3 py-2.5">
               <input
                 value={q}
                 onChange={e => setQ(e.target.value)}
-                onKeyDown={onKeyDown}
+                onKeyDown={handleKeyDown}
                 placeholder="검색어를 입력해 주세요"
-                className="bg-transparent outline-none text-body2 pr-3 flex-1"
+                className="flex-1 bg-transparent pr-3 text-body2 outline-none"
               />
               {/* 쿼리 파라미터가 없을 때만 검색 아이콘 표시 */}
               {!initialQuery && (
                 <button type="submit" aria-label="검색">
-                  <Image
-                    src={SearchIcon}
-                    alt="search icon"
-                    width={24}
-                    height={24}
-                  />
+                  <SearchIcon className="h-6 w-6" />
                 </button>
               )}
             </div>
