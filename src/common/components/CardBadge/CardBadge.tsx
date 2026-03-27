@@ -13,32 +13,41 @@ export interface CardBadgeProps {
   onClick?: () => void;
 }
 
-const iconByType = {
+const ICON_BY_TYPE = {
   like: HeartIcon,
   save: BookmarkIcon,
   share: ShareIcon,
+} as const;
+
+const ICON_COLOR_BY_TYPE: Record<CardBadgeType, string> = {
+  like: 'text-red',
+  save: 'text-blue',
+  share: 'text-gray-800',
 };
 
 export default function CardBadge({
   type,
   count,
-  className = '',
+  className,
   onClick,
 }: CardBadgeProps) {
-  const Icon = iconByType[type];
+  const Icon = ICON_BY_TYPE[type];
+  const iconColorClass = ICON_COLOR_BY_TYPE[type];
 
   return (
     <button
       type="button"
       onClick={onClick}
       className={[
-        'inline-flex items-center px-1.5 py-0.5 rounded-sm gap-1 text-caption1 text-gray-1000 bg-[rgba(254,254,254,0.6)] backdrop-blur-sm',
+        'inline-flex items-center gap-1 rounded-sm bg-[rgba(254,254,254,0.6)] px-1.5 py-0.5 text-caption1 text-gray-1000 backdrop-blur-sm',
         className,
-      ].join(' ')}
+      ]
+        .filter(Boolean)
+        .join(' ')}
       aria-label={type}
     >
-      <Icon className="w-4 h-4 shrink-0" />
-      {typeof count !== 'undefined' && <span>{count}</span>}
+      <Icon className={['h-4 w-4 shrink-0', iconColorClass].join(' ')} />
+      {count !== undefined && <span>{count}</span>}
     </button>
   );
 }

@@ -32,19 +32,23 @@ export default function TipActionBar({ stats, onDelete }: Props) {
     <section className="mt-6 px-4 pb-6">
       <div className="flex justify-center gap-3">
         <ActionIconButton
-          icon={isLiked ? <HeartColorIcon /> : <HeartIcon />}
+          icon={isLiked
+            ? <HeartColorIcon className="w-5 h-5" />
+            : <HeartIcon className="w-5 h-5 text-gray-800" />}
           value={isLiked ? stats.like + 1 : stats.like}
           onClick={() => setIsLiked((prev) => !prev)}
-          className={isLiked ? 'text-red-500' : 'text-gray-800'}
+          className={isLiked ? 'text-red' : 'text-gray-800'}
         />
         <ActionIconButton
-          icon={isBookmarked ? <BookmarkColorIcon /> : <BookmarkIcon />}
+          icon={isBookmarked
+            ? <BookmarkColorIcon className="w-4 h-5" />
+            : <BookmarkIcon className="w-4 h-5 text-gray-800" />}
           value={isBookmarked ? stats.bookmark + 1 : stats.bookmark}
           onClick={() => setIsBookmarked((prev) => !prev)}
-          className={isBookmarked ? 'text-blue-500' : 'text-gray-800'}
+          className={isBookmarked ? 'text-blue' : 'text-gray-800'}
         />
         <ActionIconButton
-          icon={<ShareIcon />}
+          icon={<ShareIcon className="w-5 h-5 text-gray-800" />}
           value={stats.share}
           className="text-gray-500"
         />
