@@ -4,8 +4,6 @@ import HeartIcon from '@/assets/svgs/heart.svg';
 import BookmarkIcon from '@/assets/svgs/bookmark.svg';
 import ShareIcon from '@/assets/svgs/share.svg';
 
-import Image from 'next/image';
-
 export type CardBadgeType = 'like' | 'save' | 'share';
 
 export interface CardBadgeProps {
@@ -27,7 +25,7 @@ export default function CardBadge({
   className = '',
   onClick,
 }: CardBadgeProps) {
-  const icon = iconByType[type];
+  const Icon = iconByType[type];
 
   return (
     <button
@@ -39,13 +37,7 @@ export default function CardBadge({
       ].join(' ')}
       aria-label={type}
     >
-      <Image
-        src={icon}
-        alt={`${type} icon`}
-        width={16}
-        height={16}
-        className="shrink-0"
-      />
+      <Icon className="w-4 h-4 shrink-0" />
       {typeof count !== 'undefined' && <span>{count}</span>}
     </button>
   );
