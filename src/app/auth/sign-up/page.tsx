@@ -62,7 +62,7 @@ const SignUpPage = () => {
         </div>
 
         {/* Step Content */}
-        <div className="w-95">{renderStepComponent()}</div>
+        <div className="w-full max-w-[380px]">{renderStepComponent()}</div>
       </div>
     </div>
   );

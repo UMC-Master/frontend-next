@@ -38,7 +38,7 @@ const PasswordStep = () => {
   }, [passwordConfirmValue, setPasswordConfirm]);
 
   return (
-    <div className="w-full flex flex-col justify-start mt-4">
+    <div className="mt-4 flex w-full flex-col justify-start pb-24">
       <div className="text-title1 text-gray-900 whitespace-pre-line">
         {`홈마스터에서 사용할\n 비밀번호를 입력해 주세요.`}
       </div>
@@ -52,7 +52,7 @@ const PasswordStep = () => {
           {...register('password')}
           type="password"
           placeholder="비밀번호를 입력해 주세요."
-          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg w-95 h-12"
+          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg h-12 w-full max-w-[380px]"
         />
         {/* 비밀번호 규칙 에러 메시지 */}
         {errors.password && (
@@ -68,7 +68,7 @@ const PasswordStep = () => {
           {...register('passwordConfirm')}
           type="password"
           placeholder="비밀번호를 다시 입력해 주세요."
-          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg w-95 h-12"
+          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg h-12 w-full max-w-[380px]"
         />
         {/* 비밀번호 확인 에러 메시지 */}
         <div className="mt-1 text-caption1 h-4.5">
@@ -83,8 +83,10 @@ const PasswordStep = () => {
       </div>
 
       {/* 다음 버튼 */}
-      <div className="absolute bottom-6">
-        <LargeButton text="다음" onClick={nextStep} disabled={!isValid} />
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
+        <div className="pointer-events-auto w-full max-w-[380px]">
+          <LargeButton text="다음" onClick={nextStep} disabled={!isValid} />
+        </div>
       </div>
     </div>
   );
