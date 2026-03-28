@@ -7,10 +7,7 @@ import AfterCheckBoxInSignIn from '@/assets/svgs/after-check-box-in-sign-in.svg'
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
 import KakaoLoginButton from '@/features/auth/sign-in/components/KakaoLoginButton/KakaoLoginButton';
 import { authTextFieldClassName } from '@/features/auth/style/authTextField';
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const isValidEmail = (value: string) => EMAIL_PATTERN.test(value.trim());
+import { isValidEmail } from '@/common/utils/validation';
 
 const SignInForm = () => {
   const [email, setEmail] = useState('');

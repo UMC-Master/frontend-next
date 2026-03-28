@@ -5,10 +5,7 @@ import clsx from 'clsx';
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
 import SmallButton from '@/components/Button/SmallButton/SmallButton';
 import { authTextFieldClassName } from '@/features/auth/style/authTextField';
-
-const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-const isValidEmail = (value: string) => EMAIL_PATTERN.test(value.trim());
+import { isValidEmail } from '@/common/utils/validation';
 
 export interface EmailRecoveryVerifyFormProps {
   /** 하단 고정 Primary 버튼 문구 */
