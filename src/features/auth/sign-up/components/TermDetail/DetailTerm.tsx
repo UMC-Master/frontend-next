@@ -1,8 +1,13 @@
+import TermDetailLayout from './TermDetailLayout';
+
 const DetailTerm = () => {
   return (
-    <div className="flex flex-col text-gray-900 mt-4">
-      <div className="text-title3 mb-2">{`(필수) 이용 약관 동의`}</div>
-      <div className="whitespace-pre-line text-caption1 mb-4">
+    <TermDetailLayout>
+      <div className="text-title3 mb-2">
+        <span className="text-gray-1000">{`(필수)`}</span>{' '}
+        <span className="text-gray-900">이용 약관 동의</span>
+      </div>
+      <div className="whitespace-pre-line text-caption1 text-gray-900 tracking-tight">
         {`마스터원 홈페이지 회원에 가입하시면 더욱 더 다양한 서비스를 이용하실 수 있습니다. 우리 사이트는 정보통신망 이용촉진에 관한 법률 등 관련 법령에 따라 아래와 같이 이용자의 동의를 받은 후 회원가입을 받고 있습니다.
 
 
@@ -307,7 +312,7 @@ const DetailTerm = () => {
 
 위 약관을 모두 숙지하였으며 회원가입에 동의합니다.`}
       </div>
-    </div>
+    </TermDetailLayout>
   );
 };
 
