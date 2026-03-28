@@ -139,16 +139,14 @@ const EmailRecoveryVerifyForm = ({
                   className="text-caption1 text-red"
                   role="alert"
                 >
-                  올바르지 않은 인증번호 입니다.
+                  올바르지 않은 인증번호입니다.
                 </p>
               ) : null}
             </div>
             <SmallButton
               text="인증완료"
               onClick={handleVerifyCode}
-              disabled={
-                !codeSent || !code.trim() || isVerified || isVerifying
-              }
+              disabled={!codeSent || !code.trim() || isVerified || isVerifying}
             />
           </div>
         </div>

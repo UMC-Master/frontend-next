@@ -1,6 +1,6 @@
 'use client';
 
-import SignInHeader from '@/features/auth/sign-in/components/SignInHeader/SignInHeader';
+import AuthPageHeader from '@/features/auth/components/AuthPageHeader/AuthPageHeader';
 import SignInForm from '@/features/auth/sign-in/components/SignInForm/SignInForm';
 import { useRouter } from 'next/navigation';
 
@@ -9,7 +9,7 @@ const SignInPage = () => {
 
   return (
     <div className="flex w-full flex-col items-center">
-      <SignInHeader onClick={() => router.back()} />
+      <AuthPageHeader title="로그인" onBack={() => router.back()} />
       <div className="mt-3 w-full flex flex-col items-center pb-8">
         <SignInForm />
       </div>

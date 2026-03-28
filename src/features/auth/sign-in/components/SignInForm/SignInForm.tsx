@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import BeforeCheckBoxInSignIn from '@/assets/svgs/BeforeCheckBoxInSignIn.svg';
-import AfterCheckBoxInSignIn from '@/assets/svgs/AfterCheckBoxInSignIn.svg';
+import BeforeCheckBoxInSignIn from '@/assets/svgs/before-check-box-in-sign-in.svg';
+import AfterCheckBoxInSignIn from '@/assets/svgs/after-check-box-in-sign-in.svg';
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
 import KakaoLoginButton from '@/features/auth/sign-in/components/KakaoLoginButton/KakaoLoginButton';
 import { authTextFieldClassName } from '@/features/auth/style/authTextField';
@@ -121,7 +121,7 @@ const SignInForm = () => {
         <KakaoLoginButton />
       </div>
 
-      <div className="mt-25 flex flex-wrap items-center justify-center gap-3 text-body2 text-gray-900">
+      <div className="mt-[6.25rem] flex flex-wrap items-center justify-center gap-3 text-body2 text-gray-900">
         <Link href="/auth/find-email" className="hover:underline">
           이메일 찾기
         </Link>

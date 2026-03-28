@@ -2,8 +2,8 @@
 
 import { useEffect, useRef, useState } from 'react';
 import clsx from 'clsx';
-import FlipDownIcon from '@/assets/svgs/FlipDownIcon.svg';
-import FlipUpIcon from '@/assets/svgs/FlipUpIcon.svg';
+import FlipDownIcon from '@/assets/svgs/flip-down-icon.svg';
+import FlipUpIcon from '@/assets/svgs/flip-up-icon.svg';
 
 const SIDO_LIST = [
   '서울특별시',
@@ -21,13 +21,13 @@ const SIGUNGU_BY_SIDO: Record<(typeof SIDO_LIST)[number], string[]> = {
   대구광역시: ['중구', '수성구'],
 };
 
-const dropdownShadowClass =
+const DROPDOWN_SHADOW_CLASS =
   'shadow-[0_0_8px_0_rgba(54,98,76,0.2)]';
 
-const triggerClass =
+const TRIGGER_CLASS =
   'flex h-12 w-full min-w-0 items-center justify-end gap-1 rounded-lg border-[0.4px] border-gray-800 bg-gray-100 px-3 py-1.5 text-body1 text-gray-900 outline-none';
 
-const listItemClass =
+const LIST_ITEM_CLASS =
   'flex h-12 w-full items-center justify-end bg-gray-100 px-3 text-right text-body1 text-gray-900';
 
 type ProfileRegionDropdownsProps = {
@@ -76,7 +76,7 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
         <div ref={sidoWrapRef} className="relative min-w-0 flex-1">
           <button
             type="button"
-            className={triggerClass}
+            className={TRIGGER_CLASS}
             aria-expanded={sidoOpen}
             aria-haspopup="listbox"
             onClick={() => {
@@ -93,7 +93,7 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
             <ul
               className={clsx(
                 'absolute left-0 top-full z-20 mt-0 w-full min-w-0 overflow-hidden rounded-lg',
-                dropdownShadowClass,
+                DROPDOWN_SHADOW_CLASS,
               )}
               role="listbox"
             >
@@ -101,7 +101,7 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
                 <li key={name} role="option" aria-selected={name === sido}>
                   <button
                     type="button"
-                    className={listItemClass}
+                    className={LIST_ITEM_CLASS}
                     onClick={() => handlePickSido(name)}
                   >
                     {name}
@@ -116,7 +116,7 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
         <div ref={sigunguWrapRef} className="relative min-w-0 flex-1">
           <button
             type="button"
-            className={clsx(triggerClass, !sigungu && 'text-gray-800')}
+            className={clsx(TRIGGER_CLASS, !sigungu && 'text-gray-800')}
             aria-expanded={sigunguOpen}
             aria-haspopup="listbox"
             disabled={sigunguOptions.length === 0}
@@ -137,13 +137,13 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
             <div
               className={clsx(
                 'absolute left-0 top-full z-20 mt-0 w-full min-w-0 overflow-hidden rounded-lg',
-                dropdownShadowClass,
+                DROPDOWN_SHADOW_CLASS,
               )}
             >
               <ul
                 className={clsx(
                   'max-h-[240px] overflow-y-auto',
-                  '[scrollbar-color:#a6a5a5_transparent] [scrollbar-width:thin]',
+                  '[scrollbar-color:var(--color-gray-500)_transparent] [scrollbar-width:thin]',
                   '[&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb]:bg-gray-500',
                 )}
                 role="listbox"
@@ -152,7 +152,7 @@ const ProfileRegionDropdowns = ({ className }: ProfileRegionDropdownsProps) => {
                   <li key={name} role="option" aria-selected={name === sigungu}>
                     <button
                       type="button"
-                      className={listItemClass}
+                      className={LIST_ITEM_CLASS}
                       onClick={() => handlePickSigungu(name)}
                     >
                       {name}
