@@ -11,7 +11,7 @@ export function StepProgressBar({
   const progressPercentage = (currentStep / totalSteps) * 100;
 
   return (
-    <div className="w-95 h-3 bg-gray-200 rounded-lg overflow-hidden">
+    <div className="h-3 w-full max-w-[380px] rounded-lg bg-gray-200 overflow-hidden">
       {/* Progress Fill */}
       <div
         className="h-3 bg-main-500 rounded-lg transition-all duration-300 ease-out"
