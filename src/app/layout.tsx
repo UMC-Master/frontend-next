@@ -4,6 +4,7 @@ import { pretendard } from '@/lib/fonts/pretendard';
 import './globals.css';
 import { Suspense } from 'react';
 import BottomNav from '@/common/components/BottomNav/BottomNav';
+import QueryProvider from '@/providers/QueryProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -38,7 +39,9 @@ export default function RootLayout({
           "
         >
           <div className="px-6 pb-24">
-            <Suspense fallback={null}>{children}</Suspense>
+            <QueryProvider>
+              <Suspense fallback={null}>{children}</Suspense>
+            </QueryProvider>
           </div>
           <BottomNav />
         </div>
