@@ -1,6 +1,7 @@
 'use client';
 
-import { ChangeEvent, useMemo, useState } from 'react';
+import Image from 'next/image';
+import { ChangeEvent, useEffect, useMemo, useState } from 'react';
 
 interface ChallengeVerifyUploaderProps {
   initialPreviewUrl?: string | null;
