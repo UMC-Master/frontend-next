@@ -11,6 +11,14 @@ export default function ChallengeVerifyUploader({
 }: ChallengeVerifyUploaderProps) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(initialPreviewUrl);
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl?.startsWith('blob:')) {
+        URL.revokeObjectURL(previewUrl);
+      }
+    };
+  }, [previewUrl]);
+
   const uploadCopy = useMemo(() => {
     if (previewUrl) {
       return '인증 사진이 준비되었습니다.';
