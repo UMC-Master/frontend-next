@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams, useSearchParams } from 'next/navigation';
+import clsx from 'clsx';
 import HeartIcon from '@/assets/svgs/heart.svg';
 import BookmarkIcon from '@/assets/svgs/bookmark.svg';
 import ShareIcon from '@/assets/svgs/share.svg';
@@ -10,6 +11,7 @@ import SearchIcon from '@/assets/svgs/search.svg';
 import { getChallengeById, type ChallengeMode } from '../data/mockChallenges';
 import ChallengeBottomBar from './ChallengeBottomBar/ChallengeBottomBar';
 import ChallengeExampleGrid from './ChallengeExampleGrid/ChallengeExampleGrid';
+import ChallengeHeroCarousel from './ChallengeHeroCarousel/ChallengeHeroCarousel';
 import ChallengeNoticeList from './ChallengeNoticeList/ChallengeNoticeList';
 import ChallengeStateModal from './ChallengeStateModal/ChallengeStateModal';
 
@@ -112,24 +114,7 @@ function ChallengeListPage() {
         <h2 className="mb-8 text-title2 whitespace-pre-line text-gray-1000">
           {'안녕하세요:)\n이번주 챌린지도'}
         </h2>
-        <div className="mb-8 flex justify-center gap-4 overflow-hidden px-6">
-          {cards.map((image, index) => (
-            <div
-              key={`${image}-${index}`}
-              className={`relative h-[300px] w-[320px] shrink-0 overflow-hidden rounded-lg ${
-                index === 1 ? 'mt-2' : ''
-              }`}
-            >
-              <Image
-                src={image}
-                alt={featured.title}
-                fill
-                className="object-cover"
-                sizes="320px"
-              />
-            </div>
-          ))}
-        </div>
+        <ChallengeHeroCarousel images={cards} title={featured.title} />
         <Link
           href="/challenges/recycle"
           className="flex h-[52px] items-center justify-center rounded-2xl bg-main-500 text-title3 text-gray-200"
