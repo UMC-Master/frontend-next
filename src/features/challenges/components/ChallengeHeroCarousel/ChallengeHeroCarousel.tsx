@@ -9,14 +9,13 @@ interface ChallengeHeroCarouselProps {
   title: string;
 }
 
-const SLIDE_GAP = 16;
-const VELOCITY_THRESHOLD = 0.35;
-const DISTANCE_THRESHOLD_RATIO = 0.18;
 const AUTOPLAY_INTERVAL = 3500;
 const AUTOPLAY_RESUME_DELAY = 5000;
 const LOOP_REPEAT_COUNT = 5;
 const SLIDE_WIDTH = 320;
 const SLIDE_HEIGHT = 300;
+const SNAP_ANIMATION_DURATION = 340;
+const SETTLE_DELAY = SNAP_ANIMATION_DURATION + 60;
 
 export default function ChallengeHeroCarousel({
   images,
@@ -31,6 +30,8 @@ export default function ChallengeHeroCarousel({
   const velocityRef = useRef(0);
   const autoplayTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const resumeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const settleTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
   const [activeIndex, setActiveIndex] = useState(0);
   const [isReady, setIsReady] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -64,22 +65,55 @@ export default function ChallengeHeroCarousel({
       return 0;
     }
 
-    return slide.offsetLeft;
+    return slide.offsetLeft - (container.clientWidth - slide.offsetWidth) / 2;
   };
 
   const centerSlide = (index: number, behavior: ScrollBehavior = 'smooth') => {
-    const slides = getSlideElements();
-    const slide = slides[index];
-
-    if (!slide) {
+    const container = scrollRef.current;
+    if (!container) {
       return;
     }
 
-    slide.scrollIntoView({
-      behavior,
-      block: 'nearest',
-      inline: 'center',
-    });
+    const targetLeft = getTargetScrollLeft(index);
+
+    if (behavior === 'auto') {
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+        animationFrameRef.current = null;
+      }
+
+      container.scrollTo({
+        left: targetLeft,
+        behavior: 'auto',
+      });
+      return;
+    }
+
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+
+    const startLeft = container.scrollLeft;
+    const delta = targetLeft - startLeft;
+    const startTime = performance.now();
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime;
+      const progress = Math.min(elapsed / SNAP_ANIMATION_DURATION, 1);
+      const easedProgress = 1 - (1 - progress) ** 3;
+
+      container.scrollLeft = startLeft + delta * easedProgress;
+
+      if (progress < 1) {
+        animationFrameRef.current = requestAnimationFrame(animate);
+        return;
+      }
+
+      animationFrameRef.current = null;
+    };
+
+    animationFrameRef.current = requestAnimationFrame(animate);
   };
 
   const getRawIndex = () => {
@@ -107,22 +141,6 @@ export default function ChallengeHeroCarousel({
     return closestIndex;
   };
 
-  const getFloatingIndex = () => {
-    const container = scrollRef.current;
-    const slides = getSlideElements();
-
-    if (!container || slides.length === 0) {
-      return 0;
-    }
-
-    const firstSlide = slides[0];
-    const secondSlide = slides[1] ?? firstSlide;
-    const slideSpacing = secondSlide.offsetLeft - firstSlide.offsetLeft || SLIDE_WIDTH + SLIDE_GAP;
-    const firstTarget = getTargetScrollLeft(0);
-
-    return (container.scrollLeft - firstTarget) / slideSpacing;
-  };
-
   useEffect(() => {
     const container = scrollRef.current;
     if (!container || images.length <= 1) {
@@ -148,8 +166,39 @@ export default function ChallengeHeroCarousel({
       if (resumeTimeoutRef.current) {
         clearTimeout(resumeTimeoutRef.current);
       }
+
+      if (settleTimeoutRef.current) {
+        clearTimeout(settleTimeoutRef.current);
+      }
+
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
   }, []);
+
+  const clearScrollAnimation = () => {
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+      animationFrameRef.current = null;
+    }
+  };
+
+  const clearSettleTimeout = () => {
+    if (settleTimeoutRef.current) {
+      clearTimeout(settleTimeoutRef.current);
+      settleTimeoutRef.current = null;
+    }
+  };
+
+  const scheduleSettle = (delay = SETTLE_DELAY) => {
+    clearSettleTimeout();
+    settleTimeoutRef.current = setTimeout(() => {
+      normalizeLoopPosition();
+      updateActiveIndex();
+      settleTimeoutRef.current = null;
+    }, delay);
+  };
 
   const updateActiveIndex = () => {
     const container = scrollRef.current;
@@ -192,6 +241,10 @@ export default function ChallengeHeroCarousel({
   };
 
   const handleScroll = () => {
+    if (isDraggingRef.current) {
+      return;
+    }
+
     updateActiveIndex();
   };
 
@@ -232,28 +285,10 @@ export default function ChallengeHeroCarousel({
       return;
     }
 
-    const currentIndex = getFloatingIndex();
     const nearestIndex = getRawIndex();
-    const delta = container.scrollLeft - dragStartScrollLeftRef.current;
-    const firstSlide = slides[0];
-    const secondSlide = slides[1] ?? firstSlide;
-    const slideSpacing = secondSlide.offsetLeft - firstSlide.offsetLeft || SLIDE_WIDTH + SLIDE_GAP;
-    const distanceThreshold = slideSpacing * DISTANCE_THRESHOLD_RATIO;
 
-    let targetIndex = nearestIndex;
-
-    if (Math.abs(velocityRef.current) > VELOCITY_THRESHOLD) {
-      targetIndex = velocityRef.current > 0 ? nearestIndex + 1 : nearestIndex - 1;
-    } else if (Math.abs(delta) > distanceThreshold) {
-      targetIndex = delta > 0 ? Math.ceil(currentIndex) : Math.floor(currentIndex);
-    }
-
-    centerSlide(targetIndex);
-
-    window.setTimeout(() => {
-      normalizeLoopPosition();
-      updateActiveIndex();
-    }, 220);
+    centerSlide(nearestIndex);
+    scheduleSettle();
   };
 
   const handlePointerDown = (event: React.PointerEvent<HTMLDivElement>) => {
@@ -263,6 +298,9 @@ export default function ChallengeHeroCarousel({
     }
 
     pauseAutoplayTemporarily();
+    clearSettleTimeout();
+    clearScrollAnimation();
+    container.scrollTo({ left: container.scrollLeft, behavior: 'auto' });
 
     if (event.pointerType !== 'mouse') {
       return;
@@ -304,7 +342,11 @@ export default function ChallengeHeroCarousel({
     container.scrollLeft = dragStartScrollLeftRef.current - deltaX;
   };
 
-  const handlePointerRelease = () => {
+  const handlePointerRelease = (event?: React.PointerEvent<HTMLDivElement>) => {
+    if (event && event.currentTarget.hasPointerCapture(event.pointerId)) {
+      event.currentTarget.releasePointerCapture(event.pointerId);
+    }
+
     if (!isDraggingRef.current) {
       handleScrollEnd();
       return;
@@ -312,8 +354,10 @@ export default function ChallengeHeroCarousel({
 
     isDraggingRef.current = false;
     setIsDragging(false);
-    snapToClosestSlide();
     pauseAutoplayTemporarily();
+    requestAnimationFrame(() => {
+      snapToClosestSlide();
+    });
   };
 
   const scrollToSlide = (index: number) => {
@@ -330,6 +374,7 @@ export default function ChallengeHeroCarousel({
     const targetIndex = images.length <= 1 ? index : index + images.length * 2;
 
     centerSlide(targetIndex);
+    scheduleSettle();
   };
 
   const scrollToNextSlide = () => {
@@ -343,14 +388,11 @@ export default function ChallengeHeroCarousel({
       return;
     }
 
+    normalizeLoopPosition();
     const currentIndex = getRawIndex();
 
     centerSlide(currentIndex + 1);
-
-    window.setTimeout(() => {
-      normalizeLoopPosition();
-      updateActiveIndex();
-    }, 220);
+    scheduleSettle();
   };
 
   useEffect(() => {
@@ -378,14 +420,24 @@ export default function ChallengeHeroCarousel({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerRelease}
         onPointerCancel={handlePointerRelease}
+        onLostPointerCapture={() => {
+          if (!isDraggingRef.current) {
+            return;
+          }
+
+          isDraggingRef.current = false;
+          setIsDragging(false);
+          pauseAutoplayTemporarily();
+          requestAnimationFrame(() => {
+            snapToClosestSlide();
+          });
+        }}
         onTouchEnd={() => {
           pauseAutoplayTemporarily();
           window.setTimeout(() => {
             snapToClosestSlide();
           }, 120);
         }}
-        onMouseEnter={() => setIsAutoplayPaused(true)}
-        onMouseLeave={() => pauseAutoplayTemporarily(1200)}
         onDragStart={event => event.preventDefault()}
         className={clsx(
           'flex gap-4 overflow-x-auto pb-2 [scrollbar-width:none] touch-pan-y overscroll-x-contain [&::-webkit-scrollbar]:hidden',
@@ -409,7 +461,8 @@ export default function ChallengeHeroCarousel({
               data-carousel-slide="true"
               key={`${image}-${index}`}
               className={clsx(
-                'relative shrink-0 snap-center overflow-hidden rounded-lg transition-transform duration-200',
+                'relative shrink-0 snap-center overflow-hidden rounded-lg',
+                !isDragging && 'transition-transform duration-200',
                 isActive ? 'scale-100' : 'scale-[0.98]',
                 normalizedIndex === 1 ? 'mt-2' : '',
               )}
