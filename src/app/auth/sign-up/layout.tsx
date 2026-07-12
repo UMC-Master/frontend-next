@@ -6,7 +6,8 @@ export const metadata: Metadata = {
 };
 
 const SignUpLayout = ({ children }: { children: React.ReactNode }) => {
-  return <div className="flex flex-col items-center">{children}</div>;
+  /* items-stretch: 약관/마케팅 상세는 전폭·왼쪽 정렬. 메인 회원가입은 page 내부에서 items-center 처리 */
+  return <div className="flex flex-col">{children}</div>;
 };
 
 export default SignUpLayout;

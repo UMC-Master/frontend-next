@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { StepProgressBar } from '@/components/ui/StepProgressBar';
 import { SignupStep } from '@/features/auth/sign-up/stores/signupStore';
 import TermsStep from '@/features/auth/sign-up/components/TermsStep/TermsStep';
-import SignUpHeader from '@/features/auth/sign-up/components/SignUpHeader/SignUpHeader';
+import AuthPageHeader from '@/features/auth/components/AuthPageHeader/AuthPageHeader';
 import {
   useCurrentStep,
   useSignupActions,
@@ -55,14 +55,14 @@ const SignUpPage = () => {
   return (
     <div>
       <div className="flex flex-col items-center">
-        <SignUpHeader onClick={handlePrevStepClick} />
+        <AuthPageHeader title="회원가입" onBack={handlePrevStepClick} />
         {/* Step Progress Bar */}
         <div className="mt-2">
           <StepProgressBar currentStep={currentStep} totalSteps={5} />
         </div>
 
         {/* Step Content */}
-        <div className="w-95">{renderStepComponent()}</div>
+        <div className="w-full max-w-[380px]">{renderStepComponent()}</div>
       </div>
     </div>
   );

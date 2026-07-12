@@ -30,6 +30,10 @@
   --color-gray-200: #eaeaea;
   --color-gray-100: #fefefe;
 
+  /* 카카오 브랜드 (로그인 버튼) */
+  --color-kakao-yellow: #fee500;
+  --color-kakao-brown: #181600;
+
   /* Title1 */
   --text-title1: 1.375rem; /* 22px */
   --text-title1--font-weight: 600;

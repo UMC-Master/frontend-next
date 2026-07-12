@@ -85,7 +85,7 @@ const EmailStep = () => {
   };
 
   return (
-    <div>
+    <div className="w-full pb-24">
       {/* 소개글 */}
       <div className="w-full flex flex-col justify-start mt-4">
         <div className="text-title1 text-gray-900 whitespace-pre-line">
@@ -153,13 +153,15 @@ const EmailStep = () => {
       </div>
 
       {/* 다음 버튼 */}
-      <div className="absolute bottom-6">
-        {/* TODO: 개발단계에서만 일단 넘기고 이메일 로직 완료되면 ! 추가 */}
-        <LargeButton
-          text="다음"
-          onClick={nextStep}
-          disabled={!isEmailVerified}
-        />
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
+        <div className="pointer-events-auto w-full max-w-[380px]">
+          {/* TODO: 개발단계에서만 일단 넘기고 이메일 로직 완료되면 ! 추가 */}
+          <LargeButton
+            text="다음"
+            onClick={nextStep}
+            disabled={!isEmailVerified}
+          />
+        </div>
       </div>
     </div>
   );

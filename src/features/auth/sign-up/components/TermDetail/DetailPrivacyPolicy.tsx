@@ -1,8 +1,12 @@
+import TermDetailLayout from './TermDetailLayout';
+
 const DetailPrivacyPolicy = () => {
   return (
-    <div className="flex flex-col text-gray-900 mt-4">
-      <div className="text-title3 mb-2">{`(필수) 개인 정보 수집 및 이용 약관 동의`}</div>
-      <div className="whitespace-pre-line text-caption1 mb-4">
+    <TermDetailLayout>
+      <div className="text-title3 mb-2 text-gray-1000">
+        {`(필수) 개인 정보 수집 및 이용 약관 동의`}
+      </div>
+      <div className="whitespace-pre-line text-caption1 text-gray-900 tracking-tight">
         {`1. 개인정보의 수집항목
 
 마스터원은 홈페이지 회원 가입 시 회원 서비스 제공에 필요한 최소한의 정보를 수집하고 있으며 개인정보파일에 수집되는 항목은 다음과 같습니다.
@@ -73,7 +77,7 @@ const DetailPrivacyPolicy = () => {
 
 • 경찰청 사이버테러대응센터 (www.ctrc.go.kr / 182)`}
       </div>
-    </div>
+    </TermDetailLayout>
   );
 };
 

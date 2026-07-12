@@ -38,7 +38,7 @@ const InterestStep = () => {
   };
 
   return (
-    <div className="w-full flex flex-col justify-start mt-4">
+    <div className="mt-4 flex w-full flex-col justify-start pb-24">
       <div className="text-title1 text-gray-900 whitespace-pre-line">
         {`마지막으로\n 관심사를 골라 주세요.`}
       </div>
@@ -77,12 +77,14 @@ const InterestStep = () => {
       </div>
 
       {/* 다음 버튼 */}
-      <div className="mt-1 mb-6">
-        <LargeButton
-          text="회원가입 완료"
-          onClick={handleSignupComplete}
-          disabled={selectedInterests.length === 0}
-        />
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
+        <div className="pointer-events-auto w-full max-w-[380px]">
+          <LargeButton
+            text="회원가입 완료"
+            onClick={handleSignupComplete}
+            disabled={selectedInterests.length === 0}
+          />
+        </div>
       </div>
     </div>
   );

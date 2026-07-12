@@ -1,5 +1,6 @@
 import CarmeraIcon from '@/assets/svgs/Camera.svg';
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
+import ProfileRegionDropdowns from './ProfileRegionDropdowns/ProfileRegionDropdowns';
 import { useSignupActions, useSignupStep4Data } from '../../hooks/useSignup';
 import { useForm } from 'react-hook-form';
 import {
@@ -76,7 +77,7 @@ const ProfileStep = () => {
   }, [nicknameValue, setNickname]);
 
   return (
-    <div className="w-full flex flex-col justify-start mt-4">
+    <div className="mt-4 flex w-full flex-col justify-start pb-24">
       <div className="text-title1 text-gray-900 whitespace-pre-line">
         {`홈마스터에서 활동을 위한\n 개인 정보를 입력해 주세요.`}
       </div>
@@ -131,7 +132,7 @@ const ProfileStep = () => {
           {...register('nickname')}
           type="text"
           placeholder="닉네임을 입력해 주세요."
-          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg w-95 h-12"
+          className="text-body1 placeholder:text-gray-900 text-gray-900 p-3 border-[0.4px] border-gray-900 rounded-lg h-12 w-full max-w-[380px]"
         />
         {/* 유효성 검사 에러 메시지 표시 */}
         {errors.nickname && (
@@ -142,20 +143,20 @@ const ProfileStep = () => {
       </div>
 
       {/* 지역 설정 드롭다운 */}
-      <div className="flex gap-4 w-95 justify-between mt-5">
-        <div className="w-45.5 h-12 px-3 py-1.5 gap-2 border-[0.4px] border-gray-900 rounded-lg"></div>
-        <div className="w-45.5 h-12 px-3 py-1.5 gap-2 border-[0.4px] border-gray-900 rounded-lg"></div>
-      </div>
-
-      {/* 지역 설정 설명 */}
-      <div className="text-caption1 text-gray-500 mt-2">
-        주소를 입력하시면 해당 지역에서 지원하는 1인가구 프로그램을 확인할 수
-        있습니다.
+      <div className="mt-5 flex w-full min-w-0 max-w-[380px] flex-col gap-2">
+        <ProfileRegionDropdowns />
+        {/* 지역 설정 설명 */}
+        <p className="text-caption1 text-gray-500">
+          주소를 입력하시면 해당 지역에서 지원하는 1인가구 프로그램을 확인할 수
+          있습니다.
+        </p>
       </div>
 
       {/* 다음 버튼 */}
-      <div className="absolute bottom-6">
-        <LargeButton text="다음" onClick={nextStep} disabled={!isValid} />
+      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
+        <div className="pointer-events-auto w-full max-w-[380px]">
+          <LargeButton text="다음" onClick={nextStep} disabled={!isValid} />
+        </div>
       </div>
     </div>
   );
