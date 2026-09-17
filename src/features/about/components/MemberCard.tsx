@@ -19,23 +19,22 @@ export default function MemberCard({
   return (
     <Link
       href={`/mypage/about/${id}`}
-      className="flex flex-col items-center gap-2 rounded-lg shadow-[0_0_16px_0_#eaeaea] bg-gray-100"
+      className="flex h-[194px] flex-col items-center gap-2 rounded-lg drop-shadow-[0_0_8px_#eaeaea]"
     >
-      {/* 사진 */}
-      <div className="w-full aspect-[182/156] rounded-t-lg overflow-hidden relative">
+      <div className="relative h-[156px] w-full overflow-hidden rounded-lg bg-main-500">
         {imageSrc ? (
           <Image
             src={imageSrc}
             alt={`${role} ${nameKo}`}
             fill
             className="object-cover"
+            sizes="182px"
           />
         ) : (
           <div className="w-full h-full bg-gray-300" />
         )}
       </div>
-      {/* 이름 */}
-      <p className="text-title4 text-gray-900 w-full px-2 pb-2">
+      <p className="w-[calc(100%-16px)] text-title4 text-gray-900">
         {role} {nameKo}
       </p>
     </Link>
