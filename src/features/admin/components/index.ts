@@ -1,4 +1,7 @@
 export { default as AdminChip } from './AdminChip';
+export { default as AdminAnalyticsTabs } from './AdminAnalyticsTabs';
+export type { AnalyticsTab } from './AdminAnalyticsTabs';
+export { default as AdminBarChart } from './AdminBarChart';
 export { default as AdminHeader } from './AdminHeader';
 export { default as AdminModal } from './AdminModal';
 export { default as AdminPageHeader } from './AdminPageHeader';
