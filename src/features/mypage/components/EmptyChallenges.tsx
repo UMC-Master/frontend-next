@@ -1,37 +1,34 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import Link from 'next/link';
 
 export default function EmptyChallenges() {
-  const router = useRouter();
-
-  const handleNavigateToChallenges = () => {
-    // TODO: Navigate to challenges page when route is ready
-    router.push('/challenges');
-  };
-
   return (
-    <div className="flex flex-col items-center gap-8 pt-12">
-      {/* Placeholder Image */}
-      <div className="w-full max-w-[380px] aspect-square bg-gray-300 rounded-lg" />
+    <div className="flex flex-col items-center pt-[23px]">
+      <Image
+        src="/mypage/challenge-empty.png"
+        alt="도전 중인 챌린지 없음"
+        width={240}
+        height={240}
+        className="size-[240px] object-cover"
+        priority
+      />
 
-      {/* Empty Message */}
-      <div className="flex flex-col items-center gap-2">
-        <p className="text-title3 text-gray-900 text-center">
+      <div className="mt-4 flex flex-col items-center gap-6">
+        <p className="text-center text-title2 text-gray-800">
           도전 중인 챌린지가 없습니다.
-        </p>
-        <p className="text-title3 text-gray-900 text-center">
+          <br />
           챌린지를 도전해 보세요!
         </p>
-      </div>
 
-      {/* CTA Button */}
-      <button
-        onClick={handleNavigateToChallenges}
-        className="bg-main-500 px-6 py-3 rounded-lg"
-      >
-        <span className="text-body2 text-gray-100">챌린지 바로가기</span>
-      </button>
+        <Link
+          href="/challenges"
+          className="flex h-12 items-center justify-center rounded-lg bg-main-500 px-3 text-title4 text-gray-200"
+        >
+          챌린지 바로가기
+        </Link>
+      </div>
     </div>
   );
 }
