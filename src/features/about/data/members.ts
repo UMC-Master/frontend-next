@@ -20,6 +20,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Aera Hwang',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/aera-hwang.png',
     qna: [
       {
         question: '자기소개',
@@ -50,6 +51,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Sungeun Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/sungeun-kim.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -64,6 +66,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Minji Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/minji-kim.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -78,6 +81,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Heesu Ra',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/heesu-ra.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -92,6 +96,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Gihoon Son',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/gihoon-son.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -106,6 +111,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Mijin Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/mijin-kim.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -120,6 +126,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Chaewon Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/chaewon-kim.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
@@ -134,6 +141,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Haeseung Lee',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/haeseung-lee.png',
     qna: [
       { question: '자기소개', answer: '' },
       { question: 'HOMEMASTER 기획 계기', answer: '' },
