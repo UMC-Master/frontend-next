@@ -4,6 +4,7 @@ import { pretendard } from '@/lib/fonts/pretendard';
 import './globals.css';
 import { Suspense } from 'react';
 import QueryProvider from '@/providers/QueryProvider';
+import AppViewport from '@/components/AppViewport';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -34,19 +35,11 @@ export default function RootLayout({
       className={`${pretendard.variable} ${geistSans.variable} ${geistMono.variable}`}
     >
       <body className="font-pretendard antialiased overflow-x-hidden">
-        {/* 모바일 기기 safe area 대응 */}
-        <div
-          className="
-            mx-auto w-full max-w-[428px] min-h-svh bg-white
-            pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]
-          "
-        >
-          <div className="pb-24 ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
-            <QueryProvider>
-              <Suspense fallback={null}>{children}</Suspense>
-            </QueryProvider>
-          </div>
-        </div>
+        <QueryProvider>
+          <Suspense fallback={null}>
+            <AppViewport>{children}</AppViewport>
+          </Suspense>
+        </QueryProvider>
       </body>
     </html>
   );
