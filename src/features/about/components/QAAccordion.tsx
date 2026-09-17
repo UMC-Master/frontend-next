@@ -23,24 +23,24 @@ export default function QAAccordion({ items }: QAAccordionProps) {
     <div className="flex flex-col gap-4 w-full">
       {items.map((item, index) => (
         <div key={index} className="flex flex-col gap-3">
-          {/* Question */}
           <button
+            type="button"
             onClick={() => handleToggle(index)}
+            aria-expanded={openIndex === index}
             className="flex items-center justify-between w-full px-4 py-3 bg-main-500 rounded-2xl shadow-[0_0_16px_0_#eaeaea]"
           >
             <span className="text-title4 text-gray-100">{item.question}</span>
             <ArrowBackIcon
-              className={`text-gray-100 transition-transform ${
+              className={`size-5 shrink-0 text-gray-100 transition-transform ${
                 openIndex === index ? 'rotate-90' : '-rotate-90'
               }`}
             />
           </button>
 
-          {/* Answer */}
-          {openIndex === index && item.answer && (
+          {openIndex === index && (
             <div className="px-4 py-3 bg-gray-100 rounded-2xl shadow-[0_0_16px_0_#eaeaea]">
               <p className="text-body2 text-gray-1000 whitespace-pre-line">
-                {item.answer}
+                {item.answer || '답변 준비 중입니다.'}
               </p>
             </div>
           )}

@@ -20,8 +20,7 @@ export default function ProfileImageUpload() {
 
   return (
     <div className="relative w-[108px] h-[108px]">
-      {/* Profile Image */}
-      <div className="w-full h-full rounded-full overflow-hidden bg-gray-300">
+      <div className="relative h-full w-full overflow-hidden rounded-full bg-gray-300">
         {imageUrl ? (
           <Image src={imageUrl} alt="프로필 사진" fill className="object-cover" />
         ) : (
@@ -29,15 +28,14 @@ export default function ProfileImageUpload() {
         )}
       </div>
 
-      {/* Camera Icon Button */}
       <label
         htmlFor="profile-image-upload"
-        className="absolute bottom-0 right-0 w-8 h-8 bg-gray-1000 rounded-full flex items-center justify-center cursor-pointer"
+        className="absolute bottom-0 right-0 flex size-9 cursor-pointer items-center justify-center rounded-full bg-gray-1000"
+        aria-label="프로필 사진 변경"
       >
         <Camera className="w-5 h-5 text-white" />
       </label>
 
-      {/* Hidden File Input */}
       <input
         id="profile-image-upload"
         type="file"

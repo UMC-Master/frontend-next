@@ -39,10 +39,8 @@ export default function MemberDetailPage() {
         onIconClick={() => router.back()}
         sticky
       />
-      <main className="flex flex-col gap-8">
-        {/* 프로필 섹션 */}
+      <main className="flex flex-col gap-8 pt-6">
         <div className="flex items-center gap-8">
-          {/* 프로필 이미지 */}
           <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 shrink-0 relative">
             {member.imageSrc ? (
               <Image
@@ -56,7 +54,6 @@ export default function MemberDetailPage() {
             )}
           </div>
 
-          {/* 정보 */}
           <div className="flex flex-col gap-2">
             <p className="text-title3 text-gray-1000">
               {member.nameKo} / {member.nameEn}
@@ -68,7 +65,6 @@ export default function MemberDetailPage() {
           </div>
         </div>
 
-        {/* Q&A 섹션 */}
         <QAAccordion items={member.qna} />
       </main>
     </>
