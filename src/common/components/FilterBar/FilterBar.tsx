@@ -26,7 +26,7 @@ export default function FilterBar({
   };
 
   return (
-    <div className="inline-flex gap-2">
+    <div className="inline-flex gap-[9px]">
       {filterOptions.map(option => (
         <button
           key={option.value}
@@ -34,7 +34,7 @@ export default function FilterBar({
           className={`px-3 py-1.5 rounded-lg text-body2 transition-colors
             ${
               selected === option.value
-                ? 'bg-main-600 text-gray-100'
+                ? 'bg-main-500 text-gray-100'
                 : 'bg-gray-200 text-gray-800'
             }`}
         >

@@ -22,7 +22,9 @@ export default function CardList({
   className = '',
 }: CardListProps) {
   return (
-    <ul className={['grid grid-cols-2 gap-4', className].join(' ')}>
+    <ul
+      className={['grid grid-cols-2 gap-x-4 gap-y-3', className].join(' ')}
+    >
       {items.map(item => (
         <li key={item.id}>
           <Card

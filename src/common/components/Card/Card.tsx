@@ -35,13 +35,18 @@ export default function Card({
     href ? <Link href={href}>{children}</Link> : <>{children}</>;
 
   return (
-    <article className={['overflow-hidden', className].join(' ')}>
-      <div className="relative aspect-[7/6] w-full">
+    <article
+      className={[
+        'relative flex h-[216px] flex-col items-center gap-2.5 rounded-lg drop-shadow-[0_0_8px_#eaeaea]',
+        className,
+      ].join(' ')}
+    >
+      <div className="relative h-[156px] w-full shrink-0 overflow-hidden rounded-lg">
         <Image
           src={imageSrc}
           alt={imageAlt}
           fill
-          className="object-cover rounded-lg"
+          className="object-cover"
           sizes="(max-width: 768px) 50vw, 182px"
         />
 
@@ -59,9 +64,9 @@ export default function Card({
         </Wrapper>
       </div>
 
-      <div className="px-2 pt-2.5 pb-1.5">
+      <div className="w-[calc(100%-16px)]">
         <Wrapper>
-          <h3 className="text-title4 text-gray-900">{title}</h3>
+          <h3 className="line-clamp-2 text-title4 text-gray-900">{title}</h3>
         </Wrapper>
       </div>
     </article>
