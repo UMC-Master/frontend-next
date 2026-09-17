@@ -42,9 +42,9 @@ export default function MemberDetailPage() {
       <main className="flex flex-col gap-8 pt-6">
         <div className="flex items-center gap-8">
           <div className="w-24 h-24 rounded-full overflow-hidden bg-gray-300 shrink-0 relative">
-            {member.imageSrc ? (
+            {member.interviewImageSrc ? (
               <Image
-                src={member.imageSrc}
+                src={member.interviewImageSrc}
                 alt={`${member.role} ${member.nameKo}`}
                 fill
                 className="object-cover"

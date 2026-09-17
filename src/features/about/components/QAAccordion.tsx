@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ArrowBackIcon from '@/assets/svgs/arrow_backward.svg';
+import ArrowDownIcon from '@/assets/svgs/arrow_downward.svg';
 
 export interface QAItem {
   question: string;
@@ -30,11 +30,13 @@ export default function QAAccordion({ items }: QAAccordionProps) {
             className="flex items-center justify-between w-full px-4 py-3 bg-main-500 rounded-2xl shadow-[0_0_16px_0_#eaeaea]"
           >
             <span className="text-title4 text-gray-100">{item.question}</span>
-            <ArrowBackIcon
-              className={`size-5 shrink-0 text-gray-100 transition-transform ${
-                openIndex === index ? 'rotate-90' : '-rotate-90'
-              }`}
-            />
+            <span className="ml-3 flex size-6 shrink-0 items-center justify-center overflow-visible">
+              <ArrowDownIcon
+                className={`size-5 text-gray-100 transition-transform [&_path]:fill-current ${
+                  openIndex === index ? 'rotate-180' : ''
+                }`}
+              />
+            </span>
           </button>
 
           {openIndex === index && (

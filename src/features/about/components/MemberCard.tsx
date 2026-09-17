@@ -29,6 +29,7 @@ export default function MemberCard({
             fill
             className="object-cover"
             sizes="182px"
+            unoptimized
           />
         ) : (
           <div className="w-full h-full bg-gray-300" />

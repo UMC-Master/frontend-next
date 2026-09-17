@@ -1,10 +1,11 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import ArrowRight from '@/assets/svgs/ArrowRight.svg';
 
 interface InfoCardProps {
-  icon?: React.ReactNode;
+  iconSrc: string;
   title: string;
   description: string;
   href?: string;
@@ -12,32 +13,30 @@ interface InfoCardProps {
 }
 
 export default function InfoCard({
-  icon,
+  iconSrc,
   title,
   description,
   href,
   onClick,
 }: InfoCardProps) {
   const content = (
-    <div className="bg-gray-100 rounded-2xl shadow-[0px_0px_16px_0px_rgba(234,234,234,1)] px-4 py-3 w-full">
+    <div className="w-full rounded-2xl bg-gray-100 px-4 py-3 shadow-[0_0_16px_0_#eaeaea]">
       <div className="flex items-center justify-between gap-3">
-        {/* Left: Icon and Text */}
-        <div className="flex items-end gap-3">
-          {/* Icon Placeholder */}
-          <div className="w-[60px] h-[60px] bg-gray-300 rounded-[24px] flex items-center justify-center shrink-0">
-            {icon}
+        <div className="flex min-w-0 items-end gap-3">
+          <div className="flex size-[60px] shrink-0 items-center justify-center rounded-[24px] bg-main-500 shadow-[0_0_8px_0_rgba(54,98,76,0.2)]">
+            <Image src={iconSrc} alt="" width={40} height={40} aria-hidden />
           </div>
 
-          {/* Text Content */}
-          <div className="flex flex-col">
-            <h3 className="text-title3 text-gray-1000">{title}</h3>
+          <div className="flex min-w-0 flex-col">
+            <h3 className="text-title3 whitespace-nowrap text-gray-1000">
+              {title}
+            </h3>
             <p className="text-body1 text-gray-900">{description}</p>
           </div>
         </div>
 
-        {/* Right: Arrow */}
-        <div className="flex items-center justify-center shrink-0">
-          <ArrowRight className="w-5 h-5" />
+        <div className="flex shrink-0 items-center justify-center">
+          <ArrowRight className="size-5" />
         </div>
       </div>
     </div>
@@ -45,7 +44,7 @@ export default function InfoCard({
 
   if (href) {
     return (
-      <Link href={href} className="block">
+      <Link href={href} className="block rounded-2xl">
         {content}
       </Link>
     );

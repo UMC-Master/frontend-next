@@ -1,47 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
 import Link from 'next/link';
 import ConfirmModal from '@/common/components/Modal/ConfirmModal';
-
-interface MenuItemProps {
-  label: string;
-  href?: string;
-  onClick?: () => void;
-}
-
-function MenuItem({ label, href, onClick }: MenuItemProps) {
-  const content = (
-    <>
-      <span>{label}</span>
-      <Image
-        src="/mypage/arrow-forward.svg"
-        alt=""
-        width={12}
-        height={12}
-        aria-hidden
-      />
-    </>
-  );
-
-  const className =
-    'flex h-[59px] w-full items-center justify-between rounded-[10px] bg-[#cacad0] px-6 text-left text-title4 text-white';
-
-  if (href) {
-    return (
-      <Link href={href} className={className}>
-        {content}
-      </Link>
-    );
-  }
-
-  return (
-    <button type="button" onClick={onClick} className={className}>
-      {content}
-    </button>
-  );
-}
 
 export default function BottomActions() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -57,17 +18,22 @@ export default function BottomActions() {
 
   return (
     <>
-      <div className="flex flex-col gap-2.5">
-        <MenuItem label="프로필 변경" href="/mypage/edit-profile" />
-        <MenuItem
-          label="로그아웃"
-          onClick={() => setShowLogoutModal(true)}
-        />
-        <MenuItem
-          label="탈퇴하기"
-          onClick={() => setShowDeleteModal(true)}
-        />
-        <MenuItem label="만든 사람들" href="/mypage/about" />
+      <div className="flex flex-col items-center gap-6 text-body2 text-gray-900">
+        <div className="flex flex-col items-center gap-3">
+          <Link href="/mypage/change-password" className="underline">
+            비밀번호변경
+          </Link>
+          <div className="flex items-center gap-2">
+            <button type="button" onClick={() => setShowLogoutModal(true)}>
+              로그아웃
+            </button>
+            <span className="h-4 w-px bg-gray-300" aria-hidden />
+            <button type="button" onClick={() => setShowDeleteModal(true)}>
+              탈퇴하기
+            </button>
+          </div>
+        </div>
+        <a href="mailto:sfdoisf@gmail.com">문의: sfdoisf@gmail.com</a>
       </div>
 
       <ConfirmModal

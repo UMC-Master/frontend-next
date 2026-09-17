@@ -5,7 +5,8 @@ export interface TeamMember {
   nameEn: string;
   university: string;
   department: string;
-  imageSrc?: string;
+  imageSrc: string;
+  interviewImageSrc?: string;
   qna: {
     question: string;
     answer: string;
@@ -20,7 +21,8 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Aera Hwang',
     university: '숭실대학교',
     department: '글로벌미디어학부',
-    imageSrc: '/creators/aera-hwang-interview.png',
+    imageSrc: '/creators/aera-hwang.png',
+    interviewImageSrc: '/creators/aera-hwang-interview.png',
     qna: [
       {
         question: '자기 소개',
@@ -51,7 +53,8 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Sungeun Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
-    imageSrc: '/creators/sungeun-kim-interview.png',
+    imageSrc: '/creators/sungeun-kim.png',
+    interviewImageSrc: '/creators/sungeun-kim-interview.png',
     qna: [
       {
         question: '자기 소개',
@@ -81,7 +84,8 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Minji Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
-    imageSrc: '/creators/minji-kim-interview.png',
+    imageSrc: '/creators/minji-kim.png',
+    interviewImageSrc: '/creators/minji-kim-interview.png',
     qna: [
       {
         question: '자기 소개',
@@ -112,7 +116,8 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Heesoo Ra',
     university: '숭실대학교',
     department: '글로벌미디어학부',
-    imageSrc: '/creators/heesu-ra-interview.png',
+    imageSrc: '/creators/heesu-ra.png',
+    interviewImageSrc: '/creators/heesu-ra-interview.png',
     qna: [
       {
         question: '자기 소개',
@@ -143,6 +148,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Gihoon Son',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/gihoon-son.png',
     qna: [
       {
         question: '자기 소개',
@@ -171,6 +177,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Mijin Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/mijin-kim.png',
     qna: [
       {
         question: '자기 소개',
@@ -201,7 +208,8 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Chaewon Kim',
     university: '숭실대학교',
     department: '글로벌미디어학부',
-    imageSrc: '/creators/chaewon-kim-interview.png',
+    imageSrc: '/creators/chaewon-kim.png',
+    interviewImageSrc: '/creators/chaewon-kim-interview.png',
     qna: [
       {
         question: '자기 소개',
@@ -231,6 +239,7 @@ export const teamMembers: TeamMember[] = [
     nameEn: 'Haeseung Lee',
     university: '숭실대학교',
     department: '글로벌미디어학부',
+    imageSrc: '/creators/haeseung-lee.png',
     qna: [
       {
         question: '자기 소개',
