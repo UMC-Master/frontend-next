@@ -10,6 +10,7 @@ export interface AppHeaderProps {
   onIconClick?: () => void;
   sticky?: boolean;
   className?: string;
+  titleClassName?: string;
 }
 
 export default function TitleHeader({
@@ -19,6 +20,7 @@ export default function TitleHeader({
   onIconClick,
   sticky = false,
   className = '',
+  titleClassName = '',
 }: AppHeaderProps) {
   const ContainerTag = sticky ? 'header' : 'div';
 
@@ -33,18 +35,20 @@ export default function TitleHeader({
       {/* Left icon */}
       <div className="absolute left-0 flex items-center">
         {LeftIcon && showLeftIcon && (
-        <button
-          type="button"
-          onClick={onIconClick}
+          <button
+            type="button"
+            onClick={onIconClick}
             aria-label="left icon"
-            className=""
-        >
-          <LeftIcon className="w-7 h-7" />
-        </button>
-      )}
+            className="flex size-9 items-center justify-center"
+          >
+            <LeftIcon className="size-7" />
+          </button>
+        )}
       </div>
       {/* Title */}
-      <h1 className="text-title2 text-gray-1000">{title}</h1>
+      <h1 className={['text-title2 text-gray-1000', titleClassName].join(' ')}>
+        {title}
+      </h1>
     </ContainerTag>
   );
 }
