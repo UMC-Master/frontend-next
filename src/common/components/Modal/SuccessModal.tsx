@@ -40,14 +40,14 @@ export default function SuccessModal({
       <div className="relative bg-[rgba(254,254,254,0.95)] backdrop-blur-[5.65px] rounded-3xl px-6 py-9 w-full max-w-[380px]">
         <div className="flex flex-col items-center gap-8 w-full">
           {/* Title */}
-          <p className="text-[22px] font-semibold leading-[1.2] tracking-[-0.01em] text-gray-900 text-center whitespace-nowrap">
+          <p className="w-full text-center text-[22px] font-semibold leading-[1.2] tracking-[-0.01em] text-gray-900">
             {title}
           </p>
 
           {/* Button */}
           <button
             onClick={handleButtonClick}
-            className="w-[332px] h-[52px] bg-main-500 rounded-lg flex items-center justify-center"
+            className="flex h-[52px] w-full max-w-[332px] items-center justify-center rounded-lg bg-main-500"
           >
             <span className="text-title3 text-gray-200">{buttonText}</span>
           </button>
