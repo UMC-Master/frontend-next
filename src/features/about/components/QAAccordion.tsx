@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import ArrowBackIcon from '@/assets/svgs/arrow_backward.svg';
+import ArrowDownIcon from '@/assets/svgs/arrow_downward.svg';
 
 export interface QAItem {
   question: string;
@@ -20,27 +20,33 @@ export default function QAAccordion({ items }: QAAccordionProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4 w-full">
+    <div className="flex w-full min-w-0 flex-col gap-4">
       {items.map((item, index) => (
-        <div key={index} className="flex flex-col gap-3">
-          {/* Question */}
+        <div key={index} className="flex w-full min-w-0 flex-col gap-3">
           <button
+            type="button"
             onClick={() => handleToggle(index)}
-            className="flex items-center justify-between w-full px-4 py-3 bg-main-500 rounded-2xl shadow-[0_0_16px_0_#eaeaea]"
+            aria-expanded={openIndex === index}
+            className="flex w-full min-w-0 max-w-full items-center justify-between rounded-2xl bg-main-500 px-4 py-3 shadow-[0_0_16px_0_#eaeaea]"
           >
-            <span className="text-title4 text-gray-100">{item.question}</span>
-            <ArrowBackIcon
-              className={`text-gray-100 transition-transform ${
-                openIndex === index ? 'rotate-90' : '-rotate-90'
-              }`}
-            />
+            <span className="min-w-0 flex-1 break-keep text-left text-title4 text-gray-100">
+              {item.question}
+            </span>
+            <span className="ml-3 flex size-7 shrink-0 items-center justify-center overflow-visible">
+              <ArrowDownIcon
+                viewBox="0 0 28 28"
+                aria-hidden="true"
+                className={`size-5 text-gray-100 transition-transform [&_path]:fill-current ${
+                  openIndex === index ? 'rotate-180' : ''
+                }`}
+              />
+            </span>
           </button>
 
-          {/* Answer */}
-          {openIndex === index && item.answer && (
-            <div className="px-4 py-3 bg-gray-100 rounded-2xl shadow-[0_0_16px_0_#eaeaea]">
+          {openIndex === index && (
+            <div className="w-full min-w-0 max-w-full rounded-2xl bg-gray-100 px-4 py-3 shadow-[0_0_16px_0_#eaeaea]">
               <p className="text-body2 text-gray-1000 whitespace-pre-line">
-                {item.answer}
+                {item.answer || '답변 준비 중입니다.'}
               </p>
             </div>
           )}

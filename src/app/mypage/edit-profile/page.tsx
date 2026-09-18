@@ -17,8 +17,6 @@ export default function EditProfilePage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = () => {
-    // TODO: 프로필 변경 로직 구현
-    console.log('Profile updated:', { name, selectedInterests });
     setShowSuccessModal(true);
   };
 
@@ -36,12 +34,10 @@ export default function EditProfilePage() {
   };
 
   return (
-    <div className="flex flex-col gap-8 pb-32">
-      {/* Profile Section */}
+    <div className="flex flex-col gap-8 pb-8 pt-4">
       <div className="flex flex-col gap-5 items-center">
         <ProfileImageUpload />
 
-        {/* Name Input */}
         <input
           type="text"
           value={name}
@@ -50,31 +46,30 @@ export default function EditProfilePage() {
           placeholder="이름"
         />
 
-        {/* Address Selector */}
         <AddressSelector />
       </div>
 
-      {/* Interest Tags */}
       <InterestTagSelector
         selectedInterests={selectedInterests}
         onToggle={handleInterestToggle}
       />
 
-      {/* Submit Button */}
       <button
+        type="button"
         onClick={handleSubmit}
         className="bg-main-500 h-[52px] rounded-2xl flex items-center justify-center"
       >
         <span className="text-title3 text-gray-200">프로필 변경</span>
       </button>
 
-      {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}
-        title="프로필 변경이 완료되었습니다."
-        buttonText="마이페이지로 이동"
+        title="프로필이 변경되었습니다."
+        buttonText="확인"
         redirectPath="/mypage"
+        illustrationSrc="/mypage/success-check.svg"
+        illustrationAlt="프로필 변경 완료"
       />
     </div>
   );

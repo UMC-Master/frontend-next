@@ -9,29 +9,26 @@ export default function ChangePasswordPage() {
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const handleSubmit = () => {
-    // TODO: Add password validation
     if (password !== confirmPassword) {
       alert('비밀번호가 일치하지 않습니다.');
       return;
     }
 
-    // TODO: Implement password change logic
-    console.log('Password changed');
     setShowSuccessModal(true);
   };
 
   return (
-    <div className="flex flex-col gap-4 pb-32">
-      {/* Title Section */}
+    <div className="flex min-h-[calc(100svh-54px)] flex-col gap-4 pb-24 pt-4">
       <div className="flex flex-col gap-1">
         <div className="text-title2 text-gray-900">
           <p className="mb-0">홈마스터에서 사용할</p>
           <p>비밀번호를 입력해 주세요.</p>
         </div>
-        <p className="text-body2 text-gray-600">조건 설명설명</p>
+        <p className="text-body2 text-gray-600">
+          영문, 숫자, 특수문자를 포함해 8자 이상 입력해 주세요.
+        </p>
       </div>
 
-      {/* Password Inputs */}
       <div className="flex flex-col gap-5">
         <input
           type="password"
@@ -49,15 +46,14 @@ export default function ChangePasswordPage() {
         />
       </div>
 
-      {/* Submit Button */}
       <button
+        type="button"
         onClick={handleSubmit}
-        className="bg-main-500 h-[52px] rounded-2xl flex items-center justify-center mt-auto fixed bottom-20 left-6 right-6 max-w-[380px] mx-auto"
+        className="fixed bottom-6 left-1/2 flex h-[52px] w-[calc(100%-48px)] max-w-[380px] -translate-x-1/2 items-center justify-center rounded-2xl bg-main-500"
       >
         <span className="text-title3 text-gray-200">비밀번호 변경</span>
       </button>
 
-      {/* Success Modal */}
       <SuccessModal
         isOpen={showSuccessModal}
         onClose={() => setShowSuccessModal(false)}

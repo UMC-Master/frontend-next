@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import FlipDownIcon from '@/assets/svgs/flip-down-icon.svg';
 
 export default function AddressSelector() {
   const [city, setCity] = useState('서울특별시');
@@ -28,9 +29,7 @@ export default function AddressSelector() {
 
   return (
     <div className="flex flex-col gap-2 w-full">
-      {/* Address Dropdowns */}
       <div className="flex gap-4 w-full">
-        {/* City Selector */}
         <div className="relative flex-1">
           <select
             value={city}
@@ -43,27 +42,11 @@ export default function AddressSelector() {
               </option>
             ))}
           </select>
-          {/* Dropdown Arrow */}
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 6L8 10L12 6"
-                stroke="#4B4545"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="pointer-events-none absolute right-3 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center">
+            <FlipDownIcon />
           </div>
         </div>
 
-        {/* District Selector */}
         <div className="relative flex-1">
           <select
             value={district}
@@ -76,28 +59,12 @@ export default function AddressSelector() {
               </option>
             ))}
           </select>
-          {/* Dropdown Arrow */}
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none">
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 16 16"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M4 6L8 10L12 6"
-                stroke="#4B4545"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          <div className="pointer-events-none absolute right-3 top-1/2 flex size-5 -translate-y-1/2 items-center justify-center">
+            <FlipDownIcon />
           </div>
         </div>
       </div>
 
-      {/* Helper Text */}
       <p className="text-caption1 text-gray-500">
         주소를 입력하시면 해당 지역에서 지원하는 1인가구 프로그램을 확인할 수
         있습니다.
