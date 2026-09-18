@@ -34,7 +34,9 @@ export default function QAAccordion({ items }: QAAccordionProps) {
             </span>
             <span className="ml-3 flex size-7 shrink-0 items-center justify-center overflow-visible">
               <ArrowDownIcon
-                className={`size-5 overflow-visible text-gray-100 transition-transform [&_path]:fill-current ${
+                viewBox="0 0 28 28"
+                aria-hidden="true"
+                className={`size-5 text-gray-100 transition-transform [&_path]:fill-current ${
                   openIndex === index ? 'rotate-180' : ''
                 }`}
               />
