@@ -35,7 +35,7 @@ export default function TipListing({
     queryFn: () => getTips({ pageParam: page, sorted: sort, limit }),
   });
   const cards =
-    query.data?.tips.map(tip => {
+    query.data?.tips.slice(0, limit).map(tip => {
       const card = toTipCard(tip);
       return {
         ...card,
