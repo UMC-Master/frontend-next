@@ -34,3 +34,44 @@ export const getOngoingChallenge = async () => {
     });
   return response.result;
 };
+
+export interface ChallengeAttempt {
+  attempt_id: number;
+  challenge_id: number;
+  user_id: number;
+  status: string;
+}
+
+const readAttempt = (response: ApiResponse<ChallengeAttempt>) => {
+  if (
+    !response.isSuccess ||
+    !Number.isSafeInteger(response.result?.attempt_id) ||
+    response.result.attempt_id <= 0 ||
+    !Number.isSafeInteger(response.result?.challenge_id) ||
+    !Number.isSafeInteger(response.result?.user_id)
+  )
+    throw new ApiError({
+      status: 400,
+      message: response.message || '챌린지 참여 응답이 올바르지 않습니다.',
+    });
+  return response.result;
+};
+
+export const startChallenge = async (challengeId: number) =>
+  readAttempt(
+    await fetcher.post<ApiResponse<ChallengeAttempt>>(
+      `/challenges/${challengeId}/start`,
+      undefined,
+      { auth: true },
+    ),
+  );
+
+// The runtime controller uses an attempt id here, despite the Swagger path description.
+export const stopChallenge = async (attemptId: number) =>
+  readAttempt(
+    await fetcher.patch<ApiResponse<ChallengeAttempt>>(
+      `/challenges/${attemptId}/stop`,
+      undefined,
+      { auth: true },
+    ),
+  );
