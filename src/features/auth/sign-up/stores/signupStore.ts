@@ -107,6 +107,10 @@ export const useSignupStore = create<SignupStore>()(
 
         setEmail: (email: string) =>
           set(s => {
+            if (s.data.email !== email) {
+              s.data.isEmailVerified = false;
+              s.data.verificationCode = '';
+            }
             s.data.email = email;
           }),
 

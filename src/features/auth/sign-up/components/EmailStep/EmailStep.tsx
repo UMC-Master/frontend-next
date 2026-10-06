@@ -10,6 +10,10 @@ import {
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import clsx from 'clsx';
+import {
+  requestSignupVerification,
+  verifySignupEmail,
+} from '@/api/auth/auth.api';
 
 const EmailStep = () => {
   const { nextStep, setEmail, setVerificationCode, setEmailVerified } =
@@ -17,9 +21,9 @@ const EmailStep = () => {
 
   const { email, verificationCode, isEmailVerified } = useSignupStep2Data();
 
-  // API 요청 로딩 상태를 관리 -> TODO: 추후 mutation 으로 관리
   const [isRequesting, setIsRequesting] = useState(false);
   const [isVerifying, setIsVerifying] = useState(false);
+  const [sentEmail, setSentEmail] = useState('');
 
   const {
     register,
@@ -56,29 +60,39 @@ const EmailStep = () => {
 
     setIsRequesting(true);
     try {
-      // TODO: 실제 이메일 인증 로직 구현
-      console.log('이메일 인증 요청:', getValues('email'));
+      const requestedEmail = getValues('email');
+      await requestSignupVerification(requestedEmail);
+      setSentEmail(requestedEmail);
       alert('인증번호가 발송되었습니다.');
     } catch (error) {
-      console.error(error);
-      alert('인증번호 발송에 실패했습니다.');
+      alert(
+        error instanceof Error
+          ? error.message
+          : '인증번호 발송에 실패했습니다.',
+      );
     } finally {
       setIsRequesting(false);
     }
   };
 
   const handleVerifyCode = async () => {
+    if (!sentEmail || sentEmail !== getValues('email')) return;
     const isCodeValid = await trigger('verificationCode');
     if (!isCodeValid) return;
 
     setIsVerifying(true);
     try {
-      // TODO: 실제 인증번호 검증 로직 구현
-      console.log('인증번호 확인 요청:', getValues('verificationCode'));
+      await verifySignupEmail(
+        getValues('email'),
+        getValues('verificationCode'),
+      );
       setEmailVerified(true);
     } catch (error) {
-      console.error(error);
-      alert('인증번호가 올바르지 않습니다.');
+      alert(
+        error instanceof Error
+          ? error.message
+          : '인증번호가 올바르지 않습니다.',
+      );
     } finally {
       setIsVerifying(false);
     }
@@ -104,12 +118,14 @@ const EmailStep = () => {
             type="email"
             placeholder="이메일을 입력해 주세요."
             className="text-body1 placeholder:text-gray-900 text-gray-800 py-1.5 px-3 border-[0.4px] border-gray-900 rounded-lg w-66 h-12"
-            disabled={isEmailVerified}
+            disabled={isEmailVerified || isRequesting || isVerifying}
           />
           <SmallButton
             text={'인증하기'}
             onClick={handleRequestVerification}
-            disabled={!emailValue || isRequesting || isEmailVerified}
+            disabled={
+              !emailValue || isRequesting || isVerifying || isEmailVerified
+            }
           />
         </div>
         {errors.email && (
@@ -131,13 +147,26 @@ const EmailStep = () => {
               },
             )}
             maxLength={6}
-            disabled={!emailValue || isEmailVerified || isVerifying}
+            disabled={
+              sentEmail !== emailValue ||
+              !sentEmail ||
+              isEmailVerified ||
+              isVerifying ||
+              isRequesting
+            }
             // emailValue 가 없으면 인증번호도 못 치게
           />
           <SmallButton
             text={'인증완료'}
             onClick={handleVerifyCode}
-            disabled={!verificationCodeValue || isEmailVerified || isVerifying}
+            disabled={
+              !verificationCodeValue ||
+              !sentEmail ||
+              sentEmail !== emailValue ||
+              isEmailVerified ||
+              isVerifying ||
+              isRequesting
+            }
           />
         </div>
 
@@ -155,7 +184,6 @@ const EmailStep = () => {
       {/* 다음 버튼 */}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
         <div className="pointer-events-auto w-full max-w-[380px]">
-          {/* TODO: 개발단계에서만 일단 넘기고 이메일 로직 완료되면 ! 추가 */}
           <LargeButton
             text="다음"
             onClick={nextStep}

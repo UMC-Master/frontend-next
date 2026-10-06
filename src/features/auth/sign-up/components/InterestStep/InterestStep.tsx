@@ -6,11 +6,22 @@ import {
 } from '../../hooks/useSignup';
 import clsx from 'clsx';
 import { INTEREST_CATEGORIES } from './InterestStep.constants';
+import { useMutation } from '@tanstack/react-query';
+import { useRouter } from 'next/navigation';
+import { signUp } from '@/api/auth/auth.api';
 
 const InterestStep = () => {
-  const { setInterests } = useSignupActions();
+  const { setInterests, reset } = useSignupActions();
+  const router = useRouter();
   const { interests: selectedInterests } = useSignupStep5Data();
   const { data: allSignupData } = useSignupData(); // 최종 제출을 위해 모든 데이터 가져오기
+  const signup = useMutation({
+    mutationFn: signUp,
+    onSuccess: () => {
+      reset();
+      router.replace('/auth/sign-in');
+    },
+  });
 
   // 태그 클릭 핸들러
   const handleTagClick = (tag: string) => {
@@ -31,10 +42,15 @@ const InterestStep = () => {
 
   // 3. 최종 회원가입 완료 핸들러
   const handleSignupComplete = () => {
-    // TODO: 서버로 최종 회원가입 데이터를 전송하는 API 호출
-    console.log('최종 회원가입 데이터:', allSignupData);
-    alert('회원가입이 완료되었습니다!');
-    // 예: Muation 호출 -> 성공 시 로그인 페이지로 리다이렉트 등
+    if (!allSignupData.isEmailVerified || signup.isPending) return;
+    signup.mutate({
+      email: allSignupData.email,
+      password: allSignupData.password,
+      nickname: allSignupData.nickname,
+      city: allSignupData.location.city,
+      district: allSignupData.location.district,
+      hashtags: selectedInterests,
+    });
   };
 
   return (
@@ -58,6 +74,7 @@ const InterestStep = () => {
                   <button
                     key={tag}
                     type="button"
+                    disabled={signup.isPending}
                     onClick={() => handleTagClick(tag)}
                     className={clsx(
                       'px-3 py-1.5 rounded-lg text-body2 transition-colors',
@@ -76,13 +93,28 @@ const InterestStep = () => {
         ))}
       </div>
 
+      {allSignupData.profileImage && (
+        <p className="text-caption1 text-gray-600">
+          프로필 이미지 저장은 아직 지원되지 않습니다.
+        </p>
+      )}
+      {signup.error && (
+        <p role="alert" className="text-caption1 text-red">
+          {signup.error.message}
+        </p>
+      )}
+
       {/* 다음 버튼 */}
       <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
         <div className="pointer-events-auto w-full max-w-[380px]">
           <LargeButton
-            text="회원가입 완료"
+            text={signup.isPending ? '가입 중...' : '회원가입 완료'}
             onClick={handleSignupComplete}
-            disabled={selectedInterests.length === 0}
+            disabled={
+              selectedInterests.length === 0 ||
+              !allSignupData.isEmailVerified ||
+              signup.isPending
+            }
           />
         </div>
       </div>
