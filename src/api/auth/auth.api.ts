@@ -10,7 +10,7 @@ export interface UserProfile {
   city: string | null;
   district: string | null;
   role: string;
-  hashtags: Array<{ hashtag: { hashtag_id: number; name: string } }>;
+  hashtags: string[];
 }
 
 const readTokens = (response: ApiResponse<AuthTokens>): AuthTokens => {
@@ -133,3 +133,24 @@ export const deactivateAccount = async () =>
   checkMessage(
     await fetcher.delete<MessageResponse>('/deactivate', { auth: true }),
   );
+
+export interface ProfileUpdateRequest {
+  nickname: string;
+  city?: string;
+  district?: string;
+  hashtags: string[];
+}
+
+export const updateProfile = async (data: ProfileUpdateRequest) => {
+  const response = await fetcher.put<ApiResponse<{ user_id: number }>>(
+    '/profile',
+    data,
+    { auth: true },
+  );
+  if (!response.isSuccess || !response.result?.user_id)
+    throw new ApiError({
+      status: 400,
+      message: response.message || '프로필 저장에 실패했습니다.',
+    });
+  // Refetch the safe GET /profile rather than caching the raw update response.
+};
