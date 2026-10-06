@@ -19,6 +19,17 @@ const tip: TipItem = {
 };
 
 describe('sorted tips API', () => {
+  it('allows the next page only when the requested page is full', async () => {
+    vi.spyOn(fetcher, 'get').mockResolvedValue({
+      isSuccess: true,
+      result: {
+        tips: Array.from({ length: 10 }, (_, i) => ({ ...tip, tipId: i + 1 })),
+      },
+    });
+    expect(
+      (await getTips({ pageParam: 1, sorted: 'latest', limit: 10 })).hasMore,
+    ).toBe(true);
+  });
   it.each(['latest', 'likes', 'saves'])(
     'unwraps result.tips for %s',
     async sort => {
