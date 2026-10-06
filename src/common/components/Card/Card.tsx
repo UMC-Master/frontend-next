@@ -44,6 +44,7 @@ export default function Card({
       <div className="relative h-[156px] w-full shrink-0 overflow-hidden rounded-lg">
         <Image
           src={imageSrc}
+          unoptimized={/^https?:\/\//.test(imageSrc)}
           alt={imageAlt}
           fill
           className="object-cover"
