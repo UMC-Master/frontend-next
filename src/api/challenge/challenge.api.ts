@@ -75,3 +75,35 @@ export const stopChallenge = async (attemptId: number) =>
       { auth: true },
     ),
   );
+
+export interface ChallengeVerification {
+  verification_id: number;
+  attempt_id: number;
+  status: string;
+}
+
+export const verifyChallenge = async (attemptId: number, images: File[]) => {
+  if (!Number.isSafeInteger(attemptId) || attemptId <= 0)
+    throw new Error('유효한 참여 ID가 필요합니다.');
+  if (!images.length || images.length > 5)
+    throw new Error('인증 이미지는 1~5장 첨부해 주세요.');
+  if (images.some(file => !file.type.startsWith('image/')))
+    throw new Error('이미지 파일만 첨부할 수 있습니다.');
+  const body = new FormData();
+  images.forEach(image => body.append('image_list', image));
+  const response = await fetcher.post<ApiResponse<ChallengeVerification>>(
+    `/challenges/${attemptId}/verify`,
+    body,
+    { auth: true },
+  );
+  if (
+    !response.isSuccess ||
+    !response.result?.verification_id ||
+    response.result.attempt_id !== attemptId
+  )
+    throw new ApiError({
+      status: 400,
+      message: response.message || '인증 제출 응답이 올바르지 않습니다.',
+    });
+  return response.result;
+};
