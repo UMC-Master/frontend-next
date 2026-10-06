@@ -49,3 +49,47 @@ export const getProfile = async () => {
   }
   return response.result;
 };
+
+interface MessageResponse {
+  message: string;
+  isSuccess?: boolean;
+}
+
+const checkMessage = (response: MessageResponse) => {
+  if (response.isSuccess === false) {
+    throw new ApiError({ status: 400, message: response.message });
+  }
+  return response;
+};
+
+export const requestSignupVerification = async (email: string) => {
+  checkMessage(await fetcher.post<MessageResponse>('/check-email', { email }));
+  return checkMessage(
+    await fetcher.post<MessageResponse>('/auth/send-verification-email', {
+      email,
+    }),
+  );
+};
+
+export const verifySignupEmail = async (email: string, code: string) =>
+  checkMessage(
+    await fetcher.post<MessageResponse>('/auth/verify-email-code', {
+      email,
+      code,
+    }),
+  );
+
+export interface SignupRequest {
+  email: string;
+  password: string;
+  nickname: string;
+  city?: string;
+  district?: string;
+  hashtags: string[];
+}
+
+export const signUp = async (data: SignupRequest) => {
+  const response = await fetcher.post<ApiResponse<unknown>>('/signup', data);
+  checkMessage(response);
+  return response.result;
+};
