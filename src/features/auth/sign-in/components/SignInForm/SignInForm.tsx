@@ -1,6 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { getProfile, signIn, signInWithKakao } from '@/api/auth/auth.api';
+import { useAuthStore } from '@/features/auth/stores/authStore';
+import { startKakaoLogin, verifyKakaoState } from '../../kakao';
 import Link from 'next/link';
 import BeforeCheckBoxInSignIn from '@/assets/svgs/before-check-box-in-sign-in.svg';
 import AfterCheckBoxInSignIn from '@/assets/svgs/after-check-box-in-sign-in.svg';
@@ -10,10 +15,63 @@ import { authTextFieldClassName } from '@/features/auth/style/authTextField';
 import { isValidEmail } from '@/common/utils/validation';
 
 const SignInForm = () => {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const queryClient = useQueryClient();
+  const callbackHandled = useRef(false);
+  const [loginError, setLoginError] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberEmail, setRememberEmail] = useState(true);
   const [emailBlurred, setEmailBlurred] = useState(false);
+
+  const login = useMutation({
+    mutationFn: async (
+      input: { email: string; password: string } | { code: string },
+    ) => {
+      const tokens =
+        'code' in input
+          ? await signInWithKakao(input.code)
+          : await signIn(input.email, input.password);
+      useAuthStore.getState().setTokens(tokens);
+      queryClient.clear();
+      // Profile availability must not turn a successful login into an apparent failure.
+      try {
+        queryClient.setQueryData(['profile'], await getProfile());
+      } catch {
+        /* Profile pages retry independently. */
+      }
+    },
+    onSuccess: () => {
+      if (rememberEmail && email.trim())
+        localStorage.setItem('homemaster-email', email.trim());
+      else if (email.trim()) localStorage.removeItem('homemaster-email');
+      router.replace('/main');
+    },
+    onError: error => setLoginError(error.message),
+  });
+  const { mutate } = login;
+
+  useEffect(() => {
+    const savedEmail = localStorage.getItem('homemaster-email');
+    if (savedEmail) setEmail(savedEmail);
+    const code = searchParams.get('code');
+    const oauthError = searchParams.get('error');
+    if ((!code && !oauthError) || callbackHandled.current) return;
+    callbackHandled.current = true;
+    try {
+      verifyKakaoState(searchParams.get('state'));
+      if (oauthError)
+        throw new Error('카카오 로그인이 취소되었거나 실패했습니다.');
+      if (code) mutate({ code });
+    } catch (error) {
+      setLoginError(
+        error instanceof Error ? error.message : '로그인에 실패했습니다.',
+      );
+    }
+    // Remove the single-use OAuth code from browser history.
+    window.history.replaceState(null, '', '/auth/sign-in');
+  }, [searchParams, mutate]);
 
   const emailTrimmed = email.trim();
   const showEmailError =
@@ -26,6 +84,9 @@ const SignInForm = () => {
       className="flex w-full max-w-[380px] flex-col items-center"
       onSubmit={e => {
         e.preventDefault();
+        if (!canSubmit || login.isPending) return;
+        setLoginError('');
+        login.mutate({ email: emailTrimmed, password });
       }}
     >
       <div className="flex w-full flex-col gap-6">
@@ -102,10 +163,15 @@ const SignInForm = () => {
         </label>
 
         <LargeButton
-          text="로그인하기"
+          text={login.isPending ? '로그인 중...' : '로그인하기'}
           className="text-title3"
-          disabled={!canSubmit}
+          disabled={!canSubmit || login.isPending}
         />
+        {loginError && (
+          <p role="alert" className="text-body2 text-red">
+            {loginError}
+          </p>
+        )}
       </div>
 
       <div className="mt-6 flex w-full items-center gap-4.5">
@@ -115,7 +181,21 @@ const SignInForm = () => {
       </div>
 
       <div className="mt-6 w-full self-stretch">
-        <KakaoLoginButton />
+        <KakaoLoginButton
+          disabled={login.isPending}
+          onClick={() => {
+            setLoginError('');
+            try {
+              startKakaoLogin();
+            } catch (error) {
+              setLoginError(
+                error instanceof Error
+                  ? error.message
+                  : '카카오 로그인에 실패했습니다.',
+              );
+            }
+          }}
+        />
       </div>
 
       <div className="mt-[6.25rem] flex flex-wrap items-center justify-center gap-3 text-body2 text-gray-900">
