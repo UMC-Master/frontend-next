@@ -40,3 +40,22 @@ export interface NewPost {
   hashtags: string[];
   imageUrls: File[];
 }
+
+export interface TipDetail {
+  tipId: number;
+  title: string;
+  content: string;
+  createdAt: string;
+  user: {
+    userId: number;
+    nickname: string | null;
+    profileImageUrl: string | null;
+    isInfluencer: boolean;
+  };
+  hashtags: string[];
+  media: Array<{ mediaUrl: string; mediaType: string }>;
+  isLiked: boolean;
+  isBookmarked: boolean;
+  likesCount: number;
+  savesCount: number;
+}

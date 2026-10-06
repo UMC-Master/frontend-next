@@ -1,7 +1,12 @@
 'use client';
 
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { addComment, deleteComment, editComment, getComments } from './comment.api';
+import {
+  addComment,
+  deleteComment,
+  editComment,
+  getComments,
+} from './comment.api';
 
 export const useAddComment = (tipId: number) => {
   const queryClient = useQueryClient();
@@ -9,7 +14,7 @@ export const useAddComment = (tipId: number) => {
   return useMutation({
     mutationFn: (comment: string) => addComment(tipId, comment),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
+      return queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
     },
   });
 };
@@ -23,14 +28,14 @@ export const useDeleteComment = (tipId: number, userId: number | undefined) => {
   return useMutation({
     mutationFn: async (commentId: number) => {
       const comments = await getComments(tipId);
-      const comment = comments.find((c) => c.comment_id === commentId);
-      if (comment?.user.user_id !== userId) {
+      const comment = comments.find(c => c.comment_id === commentId);
+      if (!userId || !comment || comment.user.user_id !== userId) {
         throw new Error('본인의 댓글만 삭제할 수 있습니다.');
       }
       return deleteComment(tipId, commentId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
+      return queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
     },
   });
 };
@@ -42,16 +47,22 @@ export const useUpdateComment = (tipId: number, userId: number | undefined) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ commentId, newComment }: { commentId: number; newComment: string }) => {
+    mutationFn: async ({
+      commentId,
+      newComment,
+    }: {
+      commentId: number;
+      newComment: string;
+    }) => {
       const comments = await getComments(tipId);
-      const comment = comments.find((c) => c.comment_id === commentId);
-      if (comment?.user.user_id !== userId) {
+      const comment = comments.find(c => c.comment_id === commentId);
+      if (!userId || !comment || comment.user.user_id !== userId) {
         throw new Error('본인의 댓글만 수정할 수 있습니다.');
       }
       return editComment(tipId, commentId, newComment);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
+      return queryClient.invalidateQueries({ queryKey: ['comments', tipId] });
     },
   });
 };
