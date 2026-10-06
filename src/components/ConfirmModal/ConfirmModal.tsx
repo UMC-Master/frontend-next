@@ -5,6 +5,7 @@ interface Props {
   cancelText?: string;
   onConfirm: () => void;
   onCancel: () => void;
+  disabled?: boolean;
 }
 
 export default function ConfirmModal({
@@ -14,6 +15,7 @@ export default function ConfirmModal({
   cancelText = '닫기',
   onConfirm,
   onCancel,
+  disabled = false,
 }: Props) {
   return (
     <div className="rounded-2xl bg-white px-6 py-6">
@@ -30,6 +32,7 @@ export default function ConfirmModal({
       <div className="mt-6 flex gap-4">
         <button
           onClick={onCancel}
+          disabled={disabled}
           className="flex-1 rounded-lg bg-gray-600 py-3 text-white"
         >
           {cancelText}
@@ -37,6 +40,7 @@ export default function ConfirmModal({
 
         <button
           onClick={onConfirm}
+          disabled={disabled}
           className="flex-1 rounded-lg bg-main-500 py-3 text-white"
         >
           {confirmText}

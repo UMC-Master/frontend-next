@@ -11,7 +11,14 @@ export default function ChallengeHeroSingle({
 }: ChallengeHeroSingleProps) {
   return (
     <div className="relative mb-4 h-[328px] overflow-hidden rounded-lg">
-      <Image src={image} alt={title} fill className="object-cover" sizes="380px" />
+      <Image
+        src={image}
+        alt={title}
+        fill
+        unoptimized
+        className="object-cover"
+        sizes="380px"
+      />
     </div>
   );
 }
