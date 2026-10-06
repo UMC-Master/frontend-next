@@ -1,34 +1,15 @@
 'use client';
 
-import { useMemo, useState } from 'react';
-import { sortCards, type SortFilterType } from '@/lib/utils/sortCards';
-import { mockCards } from '@/features/main/data/mockCards';
-import FilterBar from '@/common/components/FilterBar/FilterBar';
-import CardList from '@/common/components/CardList/CardList';
+import TipListing from '@/features/main/components/cards/TipListing';
 
 export default function MonthlyTipsPage() {
-  const [filter, setFilter] = useState<SortFilterType>('ALL');
-  const results = mockCards;
-  const sorted = useMemo(() => sortCards(results, filter), [results, filter]);
-
-  const filteredWithBadges = useMemo(() => {
-    if (filter === 'ALL') {
-      return sorted.map(card => ({ ...card, badges: [] }));
-    }
-    const target = filter.toLowerCase();
-    return sorted.map(card => ({
-      ...card,
-      badges: card.badges?.filter(b => b.type === target),
-    }));
-  }, [sorted, filter]);
-
   return (
-    <div className="flex flex-col gap-4">
-      <FilterBar
-        defaultValue="all"
-        onChange={v => setFilter(String(v).toUpperCase() as SortFilterType)}
-      />
-      <CardList items={filteredWithBadges} showBadge={filter !== 'ALL'} />
-    </div>
+    <TipListing
+      scope="monthly"
+      defaultSort="likes"
+      limit={10}
+      paginate={false}
+      notice="월간 집계 API는 미지원입니다. 현재는 최근 10개 팁 내 좋아요·저장순으로 표시하며, 전체 게시물의 월간 TOP10 순위가 아닙니다."
+    />
   );
 }
