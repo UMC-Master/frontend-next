@@ -12,11 +12,13 @@ const filterOptions = [
 export interface FilterBarProps {
   defaultValue?: string;
   onChange?: (value: string) => void;
+  options?: Array<{ label: string; value: string }>;
 }
 
 export default function FilterBar({
   defaultValue = 'all',
   onChange,
+  options = filterOptions,
 }: FilterBarProps) {
   const [selected, setSelected] = useState(defaultValue);
 
@@ -27,7 +29,7 @@ export default function FilterBar({
 
   return (
     <div className="inline-flex gap-[9px]">
-      {filterOptions.map(option => (
+      {options.map(option => (
         <button
           key={option.value}
           onClick={() => handleSelect(option.value)}
