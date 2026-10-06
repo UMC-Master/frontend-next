@@ -76,8 +76,32 @@ export const createPost = async (newPost: NewPost) => {
   return response.result.tip;
 };
 
-export const getSavedTips = () =>
-  fetcher.get<TipListResult>('/users/saved-tips', { auth: true });
+type SavedTip = Omit<
+  TipItem,
+  'likesCount' | 'savesCount' | 'hashtags' | 'updatedAt'
+> & { likeCount: number; saveCount: number };
+
+export const getSavedTips = async (): Promise<TipListResult> => {
+  const response = await fetcher.get<ApiResponse<SavedTip[]>>(
+    '/users/saved-tips',
+    { auth: true },
+  );
+  if (!response.isSuccess || !Array.isArray(response.result))
+    throw new ApiError({
+      status: 400,
+      message: response.message || '저장 목록 조회에 실패했습니다.',
+    });
+  return {
+    tips: response.result.map(tip => ({
+      ...tip,
+      likesCount: tip.likeCount,
+      savesCount: tip.saveCount,
+      hashtags: [],
+      updatedAt: tip.createdAt,
+    })),
+    hasMore: false,
+  };
+};
 
 export const getTipDetail = async (tipId: number) => {
   const response = await fetcher.get<ApiResponse<TipDetail>>(`/tips/${tipId}`, {
