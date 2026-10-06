@@ -66,6 +66,10 @@ export default function CardStack({
               <div className="relative h-9/10 w-9/10 overflow-hidden rounded-2xl bg-gray-100">
                 <Image
                   src={card.imageUrl}
+                  unoptimized={
+                    typeof card.imageUrl === 'string' &&
+                    /^https?:\/\//.test(card.imageUrl)
+                  }
                   alt={card.alt ?? 'tip image'}
                   fill
                   priority={isTop}
