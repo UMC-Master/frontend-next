@@ -2,7 +2,7 @@ import { fetcher } from '@/lib/api/fetcher';
 import { ApiError } from '@/lib/api/fetcher';
 import type { ApiResponse } from '@/lib/api/api.types';
 
-import { NewPost, TipItem } from './tip.types';
+import { NewPost, TipItem, TipDetail } from './tip.types';
 
 export type {
   Author,
@@ -79,15 +79,52 @@ export const createPost = async (newPost: NewPost) => {
 export const getSavedTips = () =>
   fetcher.get<TipListResult>('/users/saved-tips', { auth: true });
 
-export const getTipDetail = (tipId: number) =>
-  fetcher.get<TipItem>(`/tips/${tipId}`);
-
-export const toggleLike = (tipId: number) =>
-  fetcher.post<{ message: string }>(`/tips/${tipId}/like`, undefined, {
+export const getTipDetail = async (tipId: number) => {
+  const response = await fetcher.get<ApiResponse<TipDetail>>(`/tips/${tipId}`, {
     auth: true,
   });
+  if (!response.isSuccess || !response.result?.tipId)
+    throw new ApiError({
+      status: 400,
+      message: response.message || '팁 조회에 실패했습니다.',
+    });
+  return response.result;
+};
 
-export const toggleBookmark = (tipId: number) =>
-  fetcher.post<{ message: string }>(`/tips/${tipId}/bookmark`, undefined, {
-    auth: true,
-  });
+const ensureMutationSuccess = (response: {
+  isSuccess: boolean;
+  message?: string;
+}) => {
+  if (!response.isSuccess)
+    throw new ApiError({
+      status: 400,
+      message: response.message || '요청에 실패했습니다.',
+    });
+  return response;
+};
+
+export const deleteTip = async (tipId: number) =>
+  ensureMutationSuccess(
+    await fetcher.delete<{ isSuccess: boolean; message: string }>(
+      `/tips/${tipId}`,
+      { auth: true },
+    ),
+  );
+
+export const toggleLike = async (tipId: number) =>
+  ensureMutationSuccess(
+    await fetcher.post<{ isSuccess: boolean; message: string }>(
+      `/tips/${tipId}/like`,
+      undefined,
+      { auth: true },
+    ),
+  );
+
+export const toggleBookmark = async (tipId: number) =>
+  ensureMutationSuccess(
+    await fetcher.post<{ isSuccess: boolean; message: string }>(
+      `/tips/${tipId}/bookmark`,
+      undefined,
+      { auth: true },
+    ),
+  );

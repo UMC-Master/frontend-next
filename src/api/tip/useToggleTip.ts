@@ -9,7 +9,7 @@ export const useToggleLike = (tipId: number) => {
   return useMutation({
     mutationFn: () => toggleLike(tipId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tips', tipId] });
+      return queryClient.invalidateQueries({ queryKey: ['tips'] });
     },
   });
 };
@@ -20,7 +20,10 @@ export const useToggleBookmark = (tipId: number) => {
   return useMutation({
     mutationFn: () => toggleBookmark(tipId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tips', tipId] });
+      return Promise.all([
+        queryClient.invalidateQueries({ queryKey: ['tips'] }),
+        queryClient.invalidateQueries({ queryKey: ['saved-tips'] }),
+      ]);
     },
   });
 };
