@@ -41,7 +41,7 @@ export default function SearchLayout({
   };
 
   const handleBack = () => {
-    if (q.trim()) {
+    if (q.trim() || searchParams.get('hashtags')) {
       setQ('');
       router.push('/search');
       return;
@@ -62,6 +62,7 @@ export default function SearchLayout({
           <form onSubmit={handleSubmit} className="flex-1">
             <div className="flex items-center justify-between rounded-lg border-[0.4px] border-gray-600 bg-gray-100 px-3 py-2.5">
               <input
+                aria-label="검색어"
                 value={q}
                 onChange={e => setQ(e.target.value)}
                 onKeyDown={handleKeyDown}

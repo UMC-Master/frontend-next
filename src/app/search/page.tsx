@@ -1,88 +1,139 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-
+import { useQuery } from '@tanstack/react-query';
 import HashtagList from '@/features/search/components/HashtagList';
-import { sortCards, type SortFilterType } from '@/lib/utils/sortCards';
-import { mockCards } from '@/features/main/data/mockCards';
 import FilterBar from '@/common/components/FilterBar/FilterBar';
 import CardList from '@/common/components/CardList/CardList';
+import { useSearchList } from '@/api/search/useSearchList';
+import { getPopularHashtags } from '@/api/search/search.api';
+import { toTipCard } from '@/api/tip/tip.mapper';
+import type { TipSort } from '@/api/tip/tip.api';
 
 export default function SearchPage() {
+  const params = useSearchParams();
+  const query = (params.get('query') || '').trim();
+  const tags = (params.get('hashtags') || '')
+    .split(',')
+    .map(tag => tag.trim())
+    .filter(Boolean);
+  return (
+    <SearchContent
+      key={JSON.stringify([query, tags])}
+      query={query}
+      tags={tags}
+    />
+  );
+}
+
+function SearchContent({ query, tags }: { query: string; tags: string[] }) {
   const router = useRouter();
-  const sp = useSearchParams();
-  const query = (sp.get('query') ?? '').trim();
+  const [sort, setSort] = useState<TipSort>('latest');
+  const [page, setPage] = useState(1);
+  const limit = 10;
+  const results = useSearchList({ query, tags, page, limit, sort });
+  const searching = Boolean(query || tags.length);
+  const popular = useQuery({
+    queryKey: ['hashtags', 'popular'],
+    queryFn: getPopularHashtags,
+    enabled: !searching,
+  });
 
-  // 대문자 필터 사용
-  const [filter, setFilter] = useState<SortFilterType>('ALL');
-
-  // 1) 쿼리로 결과 필터링
-  const results = useMemo(() => {
-    if (!query) return [];
-    const q = query.toLowerCase();
-    return mockCards.filter(c => c.title.toLowerCase().includes(q));
-  }, [query]);
-
-  // 2) 정렬 적용 (내림차순 정렬은 sortCards 내부에서 수행)
-  const sorted = useMemo(() => sortCards(results, filter), [results, filter]);
-
-  // 3) 현재 필터에 따라 보여줄 배지 필터링
-  const filteredWithBadges = useMemo(() => {
-    if (filter === 'ALL') {
-      // 전체보기에서는 배지 숨김
-      return sorted.map(card => ({ ...card, badges: [] }));
-    }
-    const target = filter.toLowerCase(); // 'LIKE' -> 'like'
-    return sorted.map(card => ({
-      ...card,
-      badges: card.badges?.filter(b => b.type === target),
-    }));
-  }, [sorted, filter]);
-
-  // mock 해시태그
-  const popularTags = ['청소', '방', '정리', '인테리어', '가구', '청소도구'];
-  const recommendTags = [
-    '주방정리',
-    '미니멀',
-    '러그',
-    '수납',
-    '벽선반',
-    '조명',
-  ];
-  const goTag = (tag: string) =>
-    router.push(`/search?query=${encodeURIComponent(tag)}`);
-
-  // 쿼리 없으면 추천 섹션
-  if (!query) {
+  if (!searching)
     return (
-      <div className="flex flex-col gap-8">
-        <HashtagList title="인기 관심사" tags={popularTags} onClick={goTag} />
-        <HashtagList title="추천 관심사" tags={recommendTags} onClick={goTag} />
+      <div className="flex flex-col gap-4">
+        {popular.isPending && <p role="status">인기 관심사를 불러오는 중...</p>}
+        {popular.isError && (
+          <div role="alert">
+            {popular.error.message}{' '}
+            <button type="button" onClick={() => popular.refetch()}>
+              다시 시도
+            </button>
+          </div>
+        )}
+        {popular.isSuccess &&
+          (popular.data.length ? (
+            <HashtagList
+              title="인기 관심사"
+              tags={popular.data.map(tag => tag.name)}
+              onClick={tag =>
+                router.push(`/search?hashtags=${encodeURIComponent(tag)}`)
+              }
+            />
+          ) : (
+            <p>인기 관심사가 없습니다.</p>
+          ))}
       </div>
     );
-  }
 
-  const hasResults = sorted.length > 0;
-
-  // 결과 0건이면 텍스트만
-  if (!hasResults) {
-    return (
-      <div className="flex min-h-screen items-start justify-center pt-[40%] text-title3 text-gray-800 whitespace-pre-line">
-        {`검색 결과가 존재하지 않습니다.\n다른 검색어로 검색해 보세요!`}
-      </div>
-    );
-  }
-
+  const cards =
+    results.data?.result.map(tip => {
+      const card = toTipCard(tip);
+      return {
+        ...card,
+        badges: card.badges?.filter(badge =>
+          sort === 'likes'
+            ? badge.type === 'like'
+            : sort === 'saves'
+              ? badge.type === 'save'
+              : false,
+        ),
+      };
+    }) || [];
   return (
     <div className="flex flex-col gap-4">
-      {/* FilterBar가 소문자를 보낸다면 대문자로 변환해서 상태에 반영 ex) all -> ALL*/}
+      {!!tags.length && (
+        <p className="text-body2">{tags.map(tag => `#${tag}`).join(' ')}</p>
+      )}
       <FilterBar
-        defaultValue="all"
-        onChange={v => setFilter(String(v).toUpperCase() as SortFilterType)}
+        defaultValue="latest"
+        options={[
+          { label: '최신순', value: 'latest' },
+          { label: '좋아요순', value: 'likes' },
+          { label: '저장많은순', value: 'saves' },
+        ]}
+        onChange={value => {
+          setSort(value as TipSort);
+          setPage(1);
+        }}
       />
-
-      <CardList items={filteredWithBadges} showBadge={filter !== 'ALL'} />
+      {results.isPending && <p role="status">검색 중...</p>}
+      {results.isError && (
+        <div role="alert">
+          {results.error.message}{' '}
+          <button type="button" onClick={() => results.refetch()}>
+            다시 시도
+          </button>
+        </div>
+      )}
+      {results.isSuccess &&
+        (!cards.length ? (
+          <p className="py-12 text-center text-title3">
+            검색 결과가 존재하지 않습니다. 다른 검색어로 검색해 보세요!
+          </p>
+        ) : (
+          <CardList items={cards} showBadge={sort !== 'latest'} />
+        ))}
+      <nav aria-label="검색 결과 페이지" className="flex justify-center gap-6">
+        <button
+          type="button"
+          disabled={page === 1 || results.isFetching}
+          onClick={() => setPage(current => current - 1)}
+        >
+          이전
+        </button>
+        <span aria-live="polite">{page} 페이지</span>
+        <button
+          type="button"
+          disabled={
+            cards.length < limit || results.isFetching || results.isError
+          }
+          onClick={() => setPage(current => current + 1)}
+        >
+          다음
+        </button>
+      </nav>
     </div>
   );
 }
