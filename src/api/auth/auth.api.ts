@@ -93,3 +93,19 @@ export const signUp = async (data: SignupRequest) => {
   checkMessage(response);
   return response.result;
 };
+
+export const requestPasswordReset = async (email: string) =>
+  checkMessage(
+    await fetcher.post<MessageResponse>('/password/reset', { email }),
+  );
+
+export const confirmPasswordReset = async (
+  resetToken: string,
+  newPassword: string,
+) =>
+  checkMessage(
+    await fetcher.post<MessageResponse>('/password/reset/confirm', {
+      resetToken,
+      newPassword,
+    }),
+  );
