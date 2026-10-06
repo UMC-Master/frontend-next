@@ -3,6 +3,25 @@
 import Image from 'next/image';
 import { useTipWriteStore } from '../../stores/tipWriteStore';
 import AddCircle from '@/assets/svgs/add_circle.svg';
+import { useEffect, useState } from 'react';
+
+function ImagePreview({ file }: { file: File }) {
+  const [url, setUrl] = useState('');
+  useEffect(() => {
+    const preview = URL.createObjectURL(file);
+    setUrl(preview);
+    return () => URL.revokeObjectURL(preview);
+  }, [file]);
+  return url ? (
+    <Image
+      src={url}
+      alt="첨부 이미지"
+      fill
+      unoptimized
+      className="object-cover"
+    />
+  ) : null;
+}
 
 export default function ImageSection() {
   const { images, addImage, removeImage } = useTipWriteStore();
@@ -19,14 +38,11 @@ export default function ImageSection() {
             key={idx}
             className="relative h-[9.75rem] w-[9.75rem] overflow-hidden rounded-lg"
           >
-            <Image
-              src={URL.createObjectURL(file)}
-              alt="첨부 이미지"
-              fill
-              className="object-cover"
-            />
+            <ImagePreview file={file} />
             <button
               onClick={() => removeImage(idx)}
+              type="button"
+              aria-label={`첨부 이미지 ${idx + 1} 삭제`}
               className="absolute right-1 top-1 rounded-full bg-black/50 px-1 text-white"
             >
               ×
@@ -43,7 +59,9 @@ export default function ImageSection() {
               hidden
               onChange={e => {
                 const file = e.target.files?.[0];
-                if (file) addImage(file);
+                if (file && file.type.startsWith('image/')) addImage(file);
+                else if (file) alert('이미지 파일만 첨부할 수 있습니다.');
+                e.target.value = '';
               }}
             />
           </label>
