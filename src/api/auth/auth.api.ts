@@ -1,0 +1,51 @@
+import { ApiError, fetcher } from '@/lib/api/fetcher';
+import type { ApiResponse } from '@/lib/api/api.types';
+import type { AuthTokens } from '@/features/auth/stores/authStore';
+
+export interface UserProfile {
+  user_id: number;
+  nickname: string | null;
+  email: string | null;
+  profile_image_url: string | null;
+  city: string | null;
+  district: string | null;
+  role: string;
+  hashtags: Array<{ hashtag: { hashtag_id: number; name: string } }>;
+}
+
+const readTokens = (response: ApiResponse<AuthTokens>): AuthTokens => {
+  if (
+    !response.isSuccess ||
+    !response.result?.accessToken ||
+    !response.result?.refreshToken
+  ) {
+    throw new ApiError({
+      status: 400,
+      message: response.message || '로그인 응답이 올바르지 않습니다.',
+    });
+  }
+  return response.result;
+};
+
+export const signIn = async (email: string, password: string) =>
+  readTokens(
+    await fetcher.post<ApiResponse<AuthTokens>>('/login', { email, password }),
+  );
+
+export const signInWithKakao = async (code: string) =>
+  readTokens(
+    await fetcher.post<ApiResponse<AuthTokens>>('/login/kakao', { code }),
+  );
+
+export const getProfile = async () => {
+  const response = await fetcher.get<ApiResponse<UserProfile>>('/profile', {
+    auth: true,
+  });
+  if (!response.isSuccess || !response.result) {
+    throw new ApiError({
+      status: 400,
+      message: response.message || '프로필 조회에 실패했습니다.',
+    });
+  }
+  return response.result;
+};
