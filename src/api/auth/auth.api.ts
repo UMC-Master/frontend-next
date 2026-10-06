@@ -109,3 +109,27 @@ export const confirmPasswordReset = async (
       newPassword,
     }),
   );
+
+export interface UserStatistics {
+  quizScore: number;
+  tipsSharedCount: number;
+  likesReceived: number;
+}
+
+export const getStatistics = async () => {
+  const response = await fetcher.get<ApiResponse<UserStatistics>>(
+    '/statistics',
+    { auth: true },
+  );
+  if (!response.isSuccess || !response.result)
+    throw new ApiError({
+      status: 400,
+      message: response.message || '통계 조회에 실패했습니다.',
+    });
+  return response.result;
+};
+
+export const deactivateAccount = async () =>
+  checkMessage(
+    await fetcher.delete<MessageResponse>('/deactivate', { auth: true }),
+  );
