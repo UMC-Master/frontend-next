@@ -3,6 +3,7 @@
 import AuthPageHeader from '@/features/auth/components/AuthPageHeader/AuthPageHeader';
 import FindPasswordForm from '@/features/auth/find-password/components/FindPasswordForm/FindPasswordForm';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react';
 
 const FindPasswordPage = () => {
   const router = useRouter();
@@ -14,7 +15,9 @@ const FindPasswordPage = () => {
         onBack={() => router.push('/auth/sign-in')}
       />
       <div className="mt-6 flex w-full flex-col items-center pb-8">
-        <FindPasswordForm />
+        <Suspense fallback={<p role="status">불러오는 중...</p>}>
+          <FindPasswordForm />
+        </Suspense>
       </div>
     </div>
   );
