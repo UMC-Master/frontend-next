@@ -2,6 +2,11 @@ name: Gemini PR Review (Korean)
 
 on:
   workflow_dispatch:
+    inputs:
+      pr_number:
+        description: PR number to review
+        required: true
+        type: number
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -14,42 +19,34 @@ jobs:
   review:
     runs-on: ubuntu-latest
     steps:
-      - name: Gate (skip for draft/main/develop/fork)
-        id: gate
-        run: |
-          if [[ "${{ github.event.pull_request.draft }}" == "true" || "${{ github.event.pull_request.head.repo.fork }}" == "true" ]]; then
-            echo "SKIP=true" >> $GITHUB_OUTPUT
-          else
-            echo "SKIP=false" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Debug event context
-        run: |
-          echo "event_name=${{ github.event_name }}"
-          echo "ref=${{ github.ref }}"
-          echo "base_ref=${{ github.base_ref }}"
-          echo "head_ref=${{ github.head_ref }}"
-          echo "is_draft=${{ github.event.pull_request.draft || 'false' }}"
-          echo "is_fork=${{ github.event.pull_request.head.repo.fork || 'false' }}"
-          if [[ -n "${{ secrets.GEMINI_API_KEY }}" ]]; then
-            echo "gemini_api_key=present"
-          else
-            echo "gemini_api_key=missing"
-          fi
-
       - name: Review with Gemini
-        if: github.event_name == 'workflow_dispatch' || steps.gate.outputs.SKIP == 'false'
+        if: github.event_name == 'workflow_dispatch' || (!github.event.pull_request.draft && !github.event.pull_request.head.repo.fork)
         uses: actions/github-script@v7
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          # Free-tier eligible; actual billing depends on the API key's project tier.
+          GEMINI_REVIEW_MODEL: ${{ vars.GEMINI_REVIEW_MODEL || 'gemini-3.1-flash-lite' }}
         with:
           script: |
-            const pr = context.payload.pull_request;
-            if (!pr) {
-              core.setFailed('No pull_request payload found. Run this workflow from a PR event, or extend workflow_dispatch with PR inputs.');
+            const { owner, repo } = context.repo;
+            const prNumber = context.payload.pull_request?.number || Number(context.payload.inputs?.pr_number);
+            if (!Number.isSafeInteger(prNumber) || prNumber <= 0) {
+              core.setFailed('A positive PR number is required.');
               return;
             }
-            const { owner, repo } = context.repo;
+            const pr = (await github.rest.pulls.get({ owner, repo, pull_number: prNumber })).data;
+            if (pr.state !== 'open' || pr.draft || pr.head.repo?.fork || pr.head.repo?.full_name !== `${owner}/${repo}`) {
+              core.info('Skipping closed, draft, or fork PR.');
+              return;
+            }
+            if (!process.env.GEMINI_API_KEY) {
+              core.setFailed('GEMINI_API_KEY secret is missing.');
+              return;
+            }
+            if (!process.env.GEMINI_REVIEW_MODEL) {
+              core.setFailed('Set the GEMINI_REVIEW_MODEL repository variable to an available Gemini model.');
+              return;
+            }
 
             const files = await github.rest.pulls.listFiles({ owner, repo, pull_number: pr.number, per_page: 100 });
             const diffs = files.data
@@ -69,30 +66,31 @@ jobs:
             }
 
             const systemKo = `\
-당신은 HomeMaster 팀의 시니어 엔지니어입니다.
-아래 PR diff를 한국어로 리뷰하세요.
-- 일반적인 칭찬/요약 금지, 구체적이고 실행 가능한 지적만 번호로 제시
-- 버그/보안/성능/접근성/스타일/비용 관점 포함
-- 가능하면 최소 수정 제안(\`\`\`suggestion 코드블록\`\`\`) 제공
-- 맥락이 부족하면 명시적으로 가정 전제 기재
-- 팀 가이드 요약:
-  - 컴포넌트: PascalCaseFileName.tsx, Hook: useXxx.ts, 유틸: kebab-case
-  - type/interface/enum은 PascalCase, enum 값/상수는 CAPITAL_SNAKE_CASE
-  - 같은 slice는 상대경로, 상위→하위 import 최대 2 depth
-  - 이미지 webp 사용, Storybook/ESLint/Prettier 준수
-`;
+            당신은 HomeMaster 팀의 시니어 엔지니어입니다.
+            아래 PR diff를 한국어로 리뷰하세요.
+            - 일반적인 칭찬/요약 금지, 구체적이고 실행 가능한 지적만 번호로 제시
+            - 버그/보안/성능/접근성/스타일/비용 관점 포함
+            - 가능하면 최소 수정 제안(\`\`\`suggestion 코드블록\`\`\`) 제공
+            - 맥락이 부족하면 명시적으로 가정 전제 기재
+            - 팀 가이드 요약:
+              - 컴포넌트: PascalCaseFileName.tsx, Hook: useXxx.ts, 유틸: kebab-case
+              - type/interface/enum은 PascalCase, enum 값/상수는 CAPITAL_SNAKE_CASE
+              - 같은 slice는 상대경로, 상위→하위 import 최대 2 depth
+              - 이미지 webp 사용, Storybook/ESLint/Prettier 준수
+            `;
 
             const userKo = `\
-Repo: ${owner}/${repo}
-PR #${pr.number} by @${pr.user.login}
-다음은 unified diff입니다:
-${merged}
-`;
+            Repo: ${owner}/${repo}
+            PR #${pr.number} by @${pr.user.login}
+            다음은 unified diff입니다:
+            ${merged}
+            `;
 
             const fetch = global.fetch || (await import('node-fetch')).default;
-            const res = await fetch('https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-pro:generateContent?key=' + process.env.GEMINI_API_KEY, {
+            const model = process.env.GEMINI_REVIEW_MODEL;
+            const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
               method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
+              headers: { 'Content-Type': 'application/json', 'x-goog-api-key': process.env.GEMINI_API_KEY },
               body: JSON.stringify({
                 contents: [{ role: 'user', parts: [{ text: `${systemKo}\n\n---\n\n${userKo}` }]}],
                 generationConfig: { temperature: 0.2 }
