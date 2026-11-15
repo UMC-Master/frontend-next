@@ -1,24 +1,14 @@
-'use client';
+import { createPageMetadata, PUBLIC_PAGES } from '@/lib/seo';
 
-import BackIcon from '@/assets/svgs/arrow_backward.svg';
-import { useRouter } from 'next/navigation';
-import TitleHeader from '@/features/main/components/headers/TitleHeaderLayout';
+const page = PUBLIC_PAGES.find(page => page.path === '/today-tips')!;
+export const metadata = createPageMetadata(
+  page.title,
+  page.description,
+  page.path,
+);
 
-export default function TodayTipsLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const router = useRouter();
-  return (
-    <>
-      <TitleHeader
-        title="오늘의 꿀팁"
-        leftIcon={BackIcon}
-        onIconClick={() => router.back()}
-        sticky
-      />
-      <main className="">{children}</main>
-    </>
-  );
+import ClientLayout from './client-layout';
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return <ClientLayout>{children}</ClientLayout>;
 }
