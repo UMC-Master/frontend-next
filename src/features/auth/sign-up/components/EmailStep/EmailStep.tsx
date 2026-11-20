@@ -99,10 +99,10 @@ const EmailStep = () => {
   };
 
   return (
-    <div className="w-full pb-24">
+    <div className="mt-4 flex w-full flex-1 flex-col">
       {/* 소개글 */}
-      <div className="w-full flex flex-col justify-start mt-4">
-        <div className="text-title1 text-gray-900 whitespace-pre-line">
+      <div className="flex w-full flex-col">
+        <div className="whitespace-pre-line text-title1 leading-normal text-gray-900">
           {`홈마스터에서 사용할\n 이메일을 입력해 주세요.`}
         </div>
         <div className="text-body2 text-gray-600 mt-1">
@@ -182,14 +182,12 @@ const EmailStep = () => {
       </div>
 
       {/* 다음 버튼 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
-        <div className="pointer-events-auto w-full max-w-[380px]">
-          <LargeButton
-            text="다음"
-            onClick={nextStep}
-            disabled={!isEmailVerified}
-          />
-        </div>
+      <div className="mt-auto pt-6">
+        <LargeButton
+          text="다음"
+          onClick={nextStep}
+          disabled={!isEmailVerified}
+        />
       </div>
     </div>
   );

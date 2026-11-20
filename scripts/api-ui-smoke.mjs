@@ -366,6 +366,10 @@ try {
   await page
     .getByRole('button', { name: '회원가입 완료', exact: true })
     .click();
+  await page
+    .getByRole('dialog', { name: '회원가입이 완료되었습니다.' })
+    .getByRole('button', { name: '로그인 하러가기' })
+    .click();
   await page.waitForURL(`${origin}/auth/sign-in`);
   const signupBody = JSON.parse(requests.find(r => r.path === '/signup').body);
   assert.equal(signupBody.nickname, '새사용자');

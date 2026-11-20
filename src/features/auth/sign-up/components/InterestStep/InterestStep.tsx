@@ -1,4 +1,6 @@
+import Image from 'next/image';
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
+import SuccessModal from '@/common/components/Modal/SuccessModal';
 import {
   useSignupActions,
   useSignupData,
@@ -17,11 +19,11 @@ const InterestStep = () => {
   const { data: allSignupData } = useSignupData(); // 최종 제출을 위해 모든 데이터 가져오기
   const signup = useMutation({
     mutationFn: signUp,
-    onSuccess: () => {
-      reset();
-      router.replace('/auth/sign-in');
-    },
   });
+  const finishSignup = () => {
+    reset();
+    router.replace('/auth/sign-in');
+  };
 
   // 태그 클릭 핸들러
   const handleTagClick = (tag: string) => {
@@ -42,7 +44,8 @@ const InterestStep = () => {
 
   // 3. 최종 회원가입 완료 핸들러
   const handleSignupComplete = () => {
-    if (!allSignupData.isEmailVerified || signup.isPending) return;
+    if (!allSignupData.isEmailVerified || signup.isPending || signup.isSuccess)
+      return;
     signup.mutate({
       email: allSignupData.email,
       password: allSignupData.password,
@@ -54,8 +57,8 @@ const InterestStep = () => {
   };
 
   return (
-    <div className="mt-4 flex w-full flex-col justify-start pb-24">
-      <div className="text-title1 text-gray-900 whitespace-pre-line">
+    <div className="mt-4 flex w-full flex-1 flex-col">
+      <div className="whitespace-pre-line text-title1 leading-normal text-gray-900">
         {`마지막으로\n 관심사를 골라 주세요.`}
       </div>
       <div className="text-body2 text-gray-600 mt-1">
@@ -63,7 +66,7 @@ const InterestStep = () => {
       </div>
 
       {/* 4. 관심사 카테고리 및 태그 UI 렌더링 */}
-      <div className="flex flex-col gap-5 mt-6 mb-6">
+      <div className="mt-6 flex flex-col gap-5">
         {INTEREST_CATEGORIES.map(({ category, tags }) => (
           <div key={category} className="flex flex-col gap-3">
             <div className="text-title3 text-gray-800">{category}</div>
@@ -74,7 +77,7 @@ const InterestStep = () => {
                   <button
                     key={tag}
                     type="button"
-                    disabled={signup.isPending}
+                    disabled={signup.isPending || signup.isSuccess}
                     onClick={() => handleTagClick(tag)}
                     className={clsx(
                       'px-3 py-1.5 rounded-lg text-body2 transition-colors',
@@ -94,30 +97,48 @@ const InterestStep = () => {
       </div>
 
       {allSignupData.profileImage && (
-        <p className="text-caption1 text-gray-600">
+        <p className="mt-3 text-caption1 text-gray-600">
           프로필 이미지 저장은 아직 지원되지 않습니다.
         </p>
       )}
       {signup.error && (
-        <p role="alert" className="text-caption1 text-red">
+        <p role="alert" className="mt-3 text-caption1 text-red">
           {signup.error.message}
         </p>
       )}
 
       {/* 다음 버튼 */}
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
-        <div className="pointer-events-auto w-full max-w-[380px]">
-          <LargeButton
-            text={signup.isPending ? '가입 중...' : '회원가입 완료'}
-            onClick={handleSignupComplete}
-            disabled={
-              selectedInterests.length === 0 ||
-              !allSignupData.isEmailVerified ||
-              signup.isPending
-            }
-          />
-        </div>
+      <div className="mt-auto pt-6">
+        <LargeButton
+          text={signup.isPending ? '가입 중...' : '회원가입 완료'}
+          onClick={handleSignupComplete}
+          disabled={
+            selectedInterests.length === 0 ||
+            !allSignupData.isEmailVerified ||
+            signup.isPending ||
+            signup.isSuccess
+          }
+        />
       </div>
+      <SuccessModal
+        isOpen={signup.isSuccess}
+        onClose={finishSignup}
+        title="회원가입이 완료되었습니다."
+        buttonText="로그인 하러가기"
+        blurBackdrop={false}
+        illustration={
+          <div className="relative size-[200px] overflow-hidden">
+            <Image
+              src="/brand/signup-complete-logo.gif"
+              alt=""
+              width={675}
+              height={335}
+              unoptimized
+              className="absolute left-[calc(50%-3px)] top-[calc(50%+0.5px)] h-[335px] w-[675px] max-w-none -translate-x-1/2 -translate-y-1/2 object-cover"
+            />
+          </div>
+        }
+      />
     </div>
   );
 };
