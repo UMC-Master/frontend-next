@@ -1,11 +1,9 @@
 'use client';
 
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
-import clsx from 'clsx';
 
-import AfterCheckBox from '@/assets/svgs/AfterCheckBox.svg';
-import ArrowDownIcon from '@/assets/svgs/arrow_downward.svg';
 import AuthPageHeader from '@/features/auth/components/AuthPageHeader/AuthPageHeader';
 import LargeButton from '@/components/Button/LargeButton/LargeButton';
 import ConfirmModal from '@/common/components/Modal/ConfirmModal';
@@ -80,7 +78,7 @@ export default function ReportPage() {
   };
 
   return (
-    <main className="flex min-h-[calc(100svh-6rem)] w-full flex-col items-center bg-white">
+    <main className="flex min-h-[calc(100svh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] w-full flex-col items-center bg-white">
       <AuthPageHeader title="신고하기" onBack={handleBack} />
 
       <section className="mt-6 flex w-full max-w-[380px] flex-1 flex-col">
@@ -108,7 +106,12 @@ export default function ReportPage() {
                       aria-hidden
                     >
                       {isSelected ? (
-                        <AfterCheckBox className="size-6" />
+                        <Image
+                          src="/report/report-reason-selected.svg"
+                          alt=""
+                          width={24}
+                          height={24}
+                        />
                       ) : (
                         <span className="size-6 rounded border border-gray-400 bg-white" />
                       )}
@@ -118,17 +121,25 @@ export default function ReportPage() {
                     </span>
                   </span>
 
-                  <ArrowDownIcon
-                    className={clsx(
-                      'size-7 shrink-0 overflow-visible transition-transform',
-                      isSelected && 'rotate-180',
-                    )}
-                    aria-hidden
+                  <Image
+                    src={
+                      isSelected
+                        ? '/report/report-chevron-expanded.svg'
+                        : '/report/report-chevron-collapsed.svg'
+                    }
+                    alt=""
+                    width={20}
+                    height={20}
+                    className={
+                      isSelected
+                        ? 'shrink-0 rotate-90'
+                        : 'shrink-0 -rotate-90 -scale-y-100'
+                    }
                   />
                 </button>
 
                 {isSelected && (
-                  <div className="px-6 pb-4 pt-2">
+                  <div className="mt-4 px-6 pb-4 pt-2">
                     <ul className="list-disc pl-5 text-body2 text-gray-800">
                       {reason.descriptions.map(description => (
                         <li key={description}>{description}</li>
