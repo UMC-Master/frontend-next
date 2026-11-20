@@ -18,7 +18,10 @@ type AppViewportProps = {
 export default function AppViewport({ children }: AppViewportProps) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
-  const hasPageFooter = pathname === '/auth/sign-up' || pathname === '/report';
+  const hasPageFooter =
+    pathname === '/auth/sign-up' ||
+    pathname === '/report' ||
+    pathname === '/tips/create';
   const hasWriteShortcut = pathname === '/main' || pathname === '/saved-tips';
 
   if (isAdminRoute) {
