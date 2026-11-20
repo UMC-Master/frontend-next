@@ -44,8 +44,8 @@ const TermsStep = () => {
   };
 
   return (
-    <div className="mt-4 flex w-full flex-col justify-start pb-24">
-      <div className="text-title1 text-gray-900 whitespace-pre-line">
+    <div className="mt-4 flex w-full flex-1 flex-col">
+      <div className="whitespace-pre-line text-title1 leading-normal text-gray-900">
         {`안녕하세요!\n홈마스터와 함께 하는걸 환영해요.`}
       </div>
       <div className="text-body2 text-gray-600 mt-1">
@@ -139,14 +139,12 @@ const TermsStep = () => {
         </div>
       </div>
 
-      <div className="pointer-events-none fixed inset-x-0 bottom-6 z-10 flex justify-center ps-[max(1.5rem,env(safe-area-inset-left,0px))] pe-[max(1.5rem,env(safe-area-inset-right,0px))]">
-        <div className="pointer-events-auto w-full max-w-[380px]">
-          <LargeButton
-            text="다음"
-            onClick={nextStep}
-            disabled={!agreedToTerms || !agreedToPrivacyPolicy}
-          />
-        </div>
+      <div className="mt-auto pt-6">
+        <LargeButton
+          text="다음"
+          onClick={nextStep}
+          disabled={!agreedToTerms || !agreedToPrivacyPolicy}
+        />
       </div>
     </div>
   );

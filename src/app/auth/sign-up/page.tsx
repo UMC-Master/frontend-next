@@ -53,18 +53,18 @@ const SignUpPage = () => {
   }, [reset]);
 
   return (
-    <div>
-      <div className="flex flex-col items-center">
-        <AuthPageHeader title="회원가입" onBack={handlePrevStepClick} />
-        {/* Step Progress Bar */}
-        <div className="mt-2">
-          <StepProgressBar currentStep={currentStep} totalSteps={5} />
-        </div>
-
-        {/* Step Content */}
-        <div className="w-full max-w-[380px]">{renderStepComponent()}</div>
+    <main className="flex min-h-[calc(100svh-env(safe-area-inset-top)-env(safe-area-inset-bottom))] flex-col items-center pb-6">
+      <AuthPageHeader title="회원가입" onBack={handlePrevStepClick} />
+      <div className="mt-2 w-full max-w-[380px]">
+        <StepProgressBar
+          currentStep={currentStep}
+          totalSteps={SignupStep.INTERESTS}
+        />
       </div>
-    </div>
+      <div className="flex w-full max-w-[380px] flex-1 flex-col">
+        {renderStepComponent()}
+      </div>
+    </main>
   );
 };
 
