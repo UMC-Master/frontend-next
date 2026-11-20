@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { motion } from 'motion/react';
@@ -51,8 +52,20 @@ export default function BottomNav() {
   }, [pathname]);
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 mx-auto max-w-[428px] rounded-t-2xl bg-white shadow-[0px_0px_8px_0px_rgba(54,98,76,0.2)]">
-      <div className="flex items-center justify-around px-3.5 py-3.5">
+    <nav
+      aria-label="주 메뉴"
+      className="fixed inset-x-0 bottom-0 z-30 mx-auto max-w-[428px] rounded-t-2xl bg-gray-100 pb-[env(safe-area-inset-bottom)] shadow-[0px_0px_8px_0px_rgba(54,98,76,0.2)]"
+    >
+      {(pathname === '/main' || pathname === '/saved-tips') && (
+        <Link
+          href="/tips/create"
+          className="absolute right-[max(0.875rem,env(safe-area-inset-right,0px))] bottom-full mb-4 flex h-10 items-center gap-1 rounded-full bg-main-500 px-3 text-body2 text-gray-100"
+        >
+          <Image src="/tips/write-plus.svg" alt="" width={13} height={13} />
+          글쓰기
+        </Link>
+      )}
+      <div className="flex items-center py-[13px] ps-[max(0.875rem,env(safe-area-inset-left,0px))] pe-[max(0.875rem,env(safe-area-inset-right,0px))]">
         {navItems.map(item => {
           const isActive = pathname === item.href;
           const isAnimating = animatingTab === item.href;
@@ -61,12 +74,15 @@ export default function BottomNav() {
             <Link
               key={item.href}
               href={item.href}
-              className="relative flex w-[100px] flex-col items-center gap-1"
+              aria-current={isActive ? 'page' : undefined}
+              className="relative flex min-w-0 flex-1 flex-col items-center gap-1"
             >
               <NavIcon
                 type={item.iconType}
                 isActive={isActive}
-                animationProgress={isAnimating ? animationProgress : isActive ? 1 : 0}
+                animationProgress={
+                  isAnimating ? animationProgress : isActive ? 1 : 0
+                }
               />
               <motion.span
                 className={`text-caption1 text-center ${

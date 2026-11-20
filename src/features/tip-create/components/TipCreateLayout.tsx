@@ -10,10 +10,15 @@ import { useTipWrite } from '../hooks/useTipCreateForm';
 export default function TipCreateLayout() {
   const { submit, mutation, errorMessage } = useTipWrite();
   return (
-    <main className="pb-10">
-      <fieldset disabled={mutation.isPending || mutation.isSuccess}>
-        <TitleSection />
-        <ContentSection />
+    <main className="flex flex-col gap-6 pt-4 pb-6">
+      <fieldset
+        className="flex min-w-0 flex-col gap-6"
+        disabled={mutation.isPending || mutation.isSuccess}
+      >
+        <div className="flex flex-col gap-3">
+          <TitleSection />
+          <ContentSection />
+        </div>
         <ImageSection />
         <CategorySection />
       </fieldset>

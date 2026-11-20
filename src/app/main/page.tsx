@@ -9,6 +9,7 @@ import { useCallback } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getTips, type TipSort } from '@/api/tip/tip.api';
 import { getTipImage, toTipCard } from '@/api/tip/tip.mapper';
+import AppStatusScreen from '@/components/AppStatusScreen';
 
 const useMainTips = (sort: TipSort, limit: number) =>
   useQuery({
@@ -42,6 +43,14 @@ export default function MainPage() {
   const handleMonthlyTipsBtn = () => {
     router.push('/monthly-tips');
   };
+
+  if (saved.isPending && latest.isPending && liked.isPending) {
+    return <AppStatusScreen state="loading" />;
+  }
+
+  if (saved.isError && latest.isError && liked.isError) {
+    return <AppStatusScreen state="error" />;
+  }
 
   return (
     <main className="">

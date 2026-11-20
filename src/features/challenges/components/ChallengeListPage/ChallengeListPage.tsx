@@ -4,10 +4,14 @@ import Link from 'next/link';
 import SearchIcon from '@/assets/svgs/search.svg';
 import { useOngoingChallenge } from '@/api/challenge/useOngoingChallenge';
 import Image from 'next/image';
+import AppStatusScreen from '@/components/AppStatusScreen';
 
 export default function ChallengeListPage() {
   const query = useOngoingChallenge();
   const featured = query.data;
+
+  if (query.isPending) return <AppStatusScreen state="loading" />;
+  if (query.isError && !featured) return <AppStatusScreen state="error" />;
 
   return (
     <div className="pb-8">
@@ -23,7 +27,6 @@ export default function ChallengeListPage() {
         <h2 className="mb-8 text-title2 whitespace-pre-line text-gray-1000">
           {'안녕하세요:)\n이번주 챌린지도'}
         </h2>
-        {query.isPending && <p role="status">챌린지를 불러오는 중...</p>}
         {query.isError && (
           <div role="alert">
             {query.error.message}{' '}
